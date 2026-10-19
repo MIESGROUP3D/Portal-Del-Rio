@@ -85,7 +85,7 @@ export default function TourControls({ viewerRef }: TourControlsProps) {
   }, [viewerRef, isGyroActive]);
 
   const btnBase = 'w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer select-none';
-  const btnDefault = `${btnBase} bg-black/50 backdrop-blur-md border border-[rgba(255, 255, 255,0.12)] text-[rgba(255, 255, 255,0.55)] hover:text-[#FFFFFF] hover:bg-black/70 hover:border-[rgba(255, 255, 255,0.25)] hover:scale-105 active:scale-95`;
+  const btnDefault = `${btnBase} bg-[#1C2430]/50 backdrop-blur-md border border-[rgba(255, 255, 255,0.12)] text-[rgba(255, 255, 255,0.55)] hover:text-[#FFFFFF] hover:bg-[#1C2430]/70 hover:border-[rgba(255, 255, 255,0.25)] hover:scale-105 active:scale-95`;
   const btnActive = `${btnBase} bg-[#FFFFFF] text-black shadow-md shadow-[rgba(255, 255, 255,0.25)]`;
 
   // Flechas del Scene Dots Strip — más compactas que los controles
@@ -95,7 +95,7 @@ export default function TourControls({ viewerRef }: TourControlsProps) {
     <div className="fixed bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 md:gap-2.5">
 
       {/* ─── Scene Dots Strip ─── */}
-      <div className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-[rgba(255, 255, 255,0.1)]">
+      <div className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3.5 py-1.5 rounded-full bg-[#1C2430]/40 backdrop-blur-md border border-[rgba(255, 255, 255,0.1)]">
         {/* Prev */}
         <button
           onClick={handlePrev}
@@ -147,7 +147,7 @@ export default function TourControls({ viewerRef }: TourControlsProps) {
       </div>
 
       {/* ─── Controls Strip ─── */}
-      <div className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-[rgba(255, 255, 255,0.1)]">
+      <div className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-full bg-[#1C2430]/40 backdrop-blur-md border border-[rgba(255, 255, 255,0.1)]">
 
         {/* Reset view */}
         <button

@@ -20,7 +20,7 @@ export default function CtaButton() {
           width: 44,
           height: 44,
           background: '#FFFFFF',
-          color: '#1A1A1A',
+          color: '#1C2430',
           boxShadow: '0 4px 20px rgba(255, 255, 255,0.35), 0 2px 8px rgba(0,0,0,0.4)',
           textDecoration: 'none',
         }}
@@ -38,7 +38,7 @@ export default function CtaButton() {
         style={{
           padding: '10px 18px',
           background: '#FFFFFF',
-          color: '#1A1A1A',
+          color: '#1C2430',
           fontSize: 13,
           boxShadow: '0 4px 24px rgba(255, 255, 255,0.28), 0 2px 8px rgba(0,0,0,0.45)',
           textDecoration: 'none',

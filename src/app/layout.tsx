@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: assetPath(`/favicon.svg`), type: "image/svg+xml" },
+      { url: assetPath(`/favicon-32.png`), type: "image/png", sizes: "32x32" },
       { url: assetPath(`/icon.png`), type: "image/png", sizes: "512x512" },
     ],
     apple: [{ url: assetPath(`/apple-icon.png`), sizes: "180x180" }],

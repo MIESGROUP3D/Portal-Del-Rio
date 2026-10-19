@@ -6,11 +6,11 @@ import BrandLogo from '@/components/brand-logo';
 
 const BRAND = (path: string) => assetPath(`/projects/melendez/branding/${path}`);
 
-// PENDIENTE: paleta de Portal del Río (hoy placeholder, la de Tierra Linda)
-const BG    = '#333333'; // gris oscuro
-const BEIGE = '#FFFFFF'; // blanco
-const SAGE  = '#766E6B'; // cafe oscuro (anillos)
-const LIMA  = '#E3000F'; // rojo (acento)
+// Paleta de Portal del Río (navy, naranja, crema)
+const BG    = '#1C2430'; // navy de marca
+const BEIGE = '#E4E0D4'; // crema
+const SAGE  = '#C49058'; // naranja oscuro (anillos)
+const LIMA  = '#F4AC5C'; // naranja (acento)
 
 interface SplashScreenProps {
   onComplete: () => void;

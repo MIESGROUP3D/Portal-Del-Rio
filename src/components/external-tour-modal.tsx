@@ -77,7 +77,7 @@ export default function ExternalTourModal({ tour, onClose }: { tour: ExternalTou
             src={tour.url}
             title={title}
             className="absolute inset-0 w-full h-full"
-            style={{ border: 0, background: '#000' }}
+            style={{ border: 0, background: '#1C2430' }}
             allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
             allowFullScreen
           />
@@ -92,7 +92,7 @@ export default function ExternalTourModal({ tour, onClose }: { tour: ExternalTou
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255,0.2)',
-              borderLeft: '3px solid #E3000F',
+              borderLeft: '3px solid #F4AC5C',
               borderRadius: 8,
               color: '#FFFFFF',
               boxShadow: '0 8px 24px rgba(0,0,0,0.45)',

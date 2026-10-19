@@ -27,7 +27,7 @@ export default function InfoPanel() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[110] bg-black/30"
+        className="fixed inset-0 z-[110] bg-[#1C2430]/30"
         onClick={hideInfo}
         aria-hidden="true"
       />
@@ -42,7 +42,7 @@ export default function InfoPanel() {
       >
         <div
           className="relative flex items-start gap-4 p-5 rounded-2xl
-                     bg-black/60 backdrop-blur-xl
+                     bg-[#1C2430]/60 backdrop-blur-xl
                      border border-[rgba(255, 255, 255,0.15)]
                      shadow-2xl shadow-black/40"
         >

@@ -118,7 +118,7 @@ export default function PanoramaVideo({ screen, viewerRef, transitioning }: {
         onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onError={()=>setFailed(true)}
         onVolumeChange={()=>{if(videoRef.current) setMuted(videoRef.current.muted);}}
         aria-label="Video del proyecto en el televisor"
-        style={{display:'block',width:'100%',height:'100%',opacity:playing?debugOpacity:0,objectFit:'contain',background:'#000'}} />
+        style={{display:'block',width:'100%',height:'100%',opacity:playing?debugOpacity:0,objectFit:'contain',background:'#1C2430'}} />
     </button>
     {debugEnabled && <VideoFrameDebug screen={screen} corners={corners} onChange={setCorners} viewerRef={viewerRef} hostRef={hostRef} transitioning={transitioning} opacity={debugOpacity} onOpacity={setDebugOpacity} />}
   </div>;

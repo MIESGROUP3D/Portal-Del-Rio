@@ -28,17 +28,17 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #000000;
+  --background: #1C2430;
   --foreground: #ffffff;
-  --primary: #FFFFFF;
-  --ring: #FFFFFF;
+  --primary: #F4AC5C;
+  --ring: #F4AC5C;
   --border: rgba(255, 255, 255, 0.15);
   --input: rgba(255, 255, 255, 0.12);
   --muted: rgba(255, 255, 255, 0.08);
   --muted-foreground: rgba(255, 255, 255, 0.5);
   --accent: rgba(255, 255, 255, 0.12);
   --accent-foreground: #ffffff;
-  --destructive: #ef4444;
+  --destructive: #F4AC5C;
   --card: rgba(255, 255, 255, 0.04);
   --card-foreground: #ffffff;
   --popover: rgba(0, 0, 0, 0.8);
@@ -51,11 +51,11 @@
 
 .pnlm-container {
   font-family: var(--font-inter), system-ui, sans-serif !important;
-  background: #000 !important;
+  background: #1C2430 !important;
 }
 
 .pnlm-render-container canvas {
-  background: #000 !important;
+  background: #1C2430 !important;
 }
 
 .pnlm-controls-container,
@@ -92,32 +92,32 @@
   justify-content: center;
   position: relative;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
-  border: 2px solid rgba(227, 0, 15, 0.35);
+  border: 2px solid rgba(244,172,92,0.35);
   backdrop-filter: blur(8px);
   transition: all 0.25s ease;
 }
 
 .pano-hotspot:hover .pano-hotspot-circle {
-  border-color: rgba(227, 0, 15, 0.6);
-  box-shadow: 0 0 32px rgba(227, 0, 15, 0.2);
+  border-color: rgba(244,172,92,0.6);
+  box-shadow: 0 0 32px rgba(244,172,92,0.2);
 }
 
 /* Scene hotspot — gold */
 .pano-hotspot-circle[data-type="scene"] {
-  background: rgba(227, 0, 15, 0.9);
-  box-shadow: 0 0 24px rgba(227, 0, 15, 0.4);
+  background: rgba(244,172,92,0.9);
+  box-shadow: 0 0 24px rgba(244,172,92,0.4);
 }
 
 /* Info hotspot — gold dimmed */
 .pano-hotspot-circle[data-type="info"] {
-  background: rgba(227, 0, 15, 0.6);
-  box-shadow: 0 0 20px rgba(227, 0, 15, 0.25);
+  background: rgba(244,172,92,0.6);
+  box-shadow: 0 0 20px rgba(244,172,92,0.25);
 }
 
 /* URL hotspot — gold dimmed */
 .pano-hotspot-circle[data-type="url"] {
-  background: rgba(227, 0, 15, 0.6);
-  box-shadow: 0 0 20px rgba(227, 0, 15, 0.25);
+  background: rgba(244,172,92,0.6);
+  box-shadow: 0 0 20px rgba(244,172,92,0.25);
 }
 
 /* Pulse ring for scene hotspots */
@@ -131,7 +131,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 2px solid rgba(227, 0, 15, 0.5);
+  border: 2px solid rgba(244,172,92,0.5);
   animation: pano-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -160,7 +160,7 @@
   transform: translateX(-50%) translateY(6px);
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(227, 0, 15, 0.15);
+  border: 1px solid rgba(244,172,92,0.15);
   border-radius: 10px;
   padding: 8px 16px;
   white-space: nowrap;
@@ -300,12 +300,12 @@
 }
 
 .tour-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(227, 0, 15, 0.25);
+  background: rgba(244,172,92,0.25);
   border-radius: 2px;
 }
 
 .tour-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(227, 0, 15, 0.5);
+  background: rgba(244,172,92,0.5);
 }
 
 /* Scrollbar de la barra lateral — usa el beige del propio sidebar */

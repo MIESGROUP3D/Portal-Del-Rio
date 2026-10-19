@@ -3,18 +3,18 @@
 import type { CSSProperties } from 'react';
 import { assetPath } from '@/lib/asset-path';
 
-// PNG transparentes generados de los JPG del cliente (TL_Pradera Horizontal / TL Pradera Vertical).
-// `dark`: version para fondo oscuro (rojo de marca + blanco). `mask`: silueta para teñir.
+// PNG transparentes recortados de los logos del cliente (Portal del Río, versiones FN = fondo navy/oscuro).
+// `dark`: version para fondo oscuro (naranja + crema). `mask`: silueta para teñir.
 const BRAND = (file: string) => assetPath(`/projects/melendez/branding/${file}`);
 const LOGOS = {
-  horizontal: { dark: BRAND('LogoPortalDelRioHorizontalOscuro.png'), mask: BRAND('LogoPortalDelRioHorizontal.png'), ratio: '822 / 207' },
-  vertical:   { dark: BRAND('LogoPortalDelRioVerticalOscuro.png'),   mask: BRAND('LogoPortalDelRioVertical.png'),   ratio: '572 / 479' },
+  horizontal: { dark: BRAND('LogoPortalDelRioHorizontalOscuro.png'), mask: BRAND('LogoPortalDelRioHorizontal.png'), ratio: '676 / 246' },
+  vertical:   { dark: BRAND('LogoPortalDelRioVerticalOscuro.png'),   mask: BRAND('LogoPortalDelRioVertical.png'),   ratio: '436 / 453' },
 };
 
 interface Props {
   className?: string;
   style?: CSSProperties;
-  /** Si se define, el logo se tiñe de este color sólido (mask-image). Sin él: rojo + blanco de marca. */
+  /** Si se define, el logo se tiñe de este color sólido (mask-image). Sin él: naranja + crema de marca. */
   color?: string;
   /** Version del logo (default: horizontal). */
   variant?: keyof typeof LOGOS;

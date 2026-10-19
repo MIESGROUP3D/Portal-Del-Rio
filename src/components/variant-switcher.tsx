@@ -99,7 +99,7 @@ export default function VariantSwitcher() {
                   letterSpacing: 0.3,
                   cursor: isTransitioning ? 'wait' : isActive ? 'default' : 'pointer',
                   background: isActive ? '#FFFFFF' : 'transparent',
-                  color: isActive ? '#0A0A0A' : 'rgba(255, 255, 255,0.7)',
+                  color: isActive ? '#1C2430' : 'rgba(255, 255, 255,0.7)',
                   border: 'none',
                   fontFamily: 'inherit',
                   whiteSpace: 'nowrap',

@@ -4,7 +4,7 @@ import BrandLogo from '@/components/brand-logo';
 
 export default function LoadingScreen() {
   return (
-    <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black gap-0">
+    <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#1C2430] gap-0">
       <BrandLogo variant="vertical" style={{ width: 220 }} />
       <div className="relative w-10 h-10 mt-8 mb-6">
         <div

@@ -55,7 +55,7 @@ export default function SceneSelector() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-[100] bg-[#1C2430]/50 backdrop-blur-sm animate-fade-in"
         onClick={toggleSceneList}
         aria-hidden="true"
       />
@@ -64,7 +64,7 @@ export default function SceneSelector() {
       <div
         ref={panelRef}
         className="fixed top-0 right-0 z-[101] h-full w-80 flex flex-col
-                   bg-black/70 backdrop-blur-xl border-l border-white/10
+                   bg-[#1C2430]/70 backdrop-blur-xl border-l border-white/10
                    shadow-2xl shadow-black/40
                    animate-slide-in-right"
         role="dialog"

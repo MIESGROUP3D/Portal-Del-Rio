@@ -794,7 +794,7 @@ export default function LeftSidebar() {
                 fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: '0.18em',
-                color: '#0A0A0A',
+                color: '#1C2430',
                 background: '#FFFFFF',
                 border: 'none',
                 borderRadius: 8,
