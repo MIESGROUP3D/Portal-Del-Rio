@@ -258,7 +258,10 @@ export default function DebugPanel({ viewerHandle }: DebugPanelProps) {
   const setSpotTarget = useCallback(
     (spotId: string, targetId: string) => {
       const target = selectedApartment?.scenes.find((s) => s.id === targetId);
-      const taken = new Set(spots.filter((h) => h.id !== spotId).map((h) => h.id));
+      // Tambien los ids del config (aunque esten borrados en debug): si el nuevo repite uno,
+      // effectiveHotspots lo tomaria por "ya pegado" y lo esconderia.
+      const configIds = selectedApartment?.scenes.find((s) => s.id === currentSceneId)?.hotspots.map((h) => h.id) ?? [];
+      const taken = new Set([...spots.filter((h) => h.id !== spotId).map((h) => h.id), ...configIds]);
       debugActions.updateAdded(currentSceneId, spotId, {
         targetSceneId: targetId,
         ...(target

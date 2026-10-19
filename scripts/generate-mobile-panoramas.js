@@ -20,7 +20,9 @@ const JPEG_QUALITY = 80;
 
 // Carpetas que contienen panoramas equirectangulares de fuente.
 const SOURCE_DIRS = [
-  'public/projects/melendez/portal-del-rio/panoramas',
+  'public/projects/melendez/portal-del-rio/panoramas/tipo-a',
+  'public/projects/melendez/portal-del-rio/panoramas/tipo-b',
+  'public/projects/melendez/portal-del-rio/panoramas/areas',
   'public/projects/melendez/portal-del-rio/images/exterior',
 ];
 

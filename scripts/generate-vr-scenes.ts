@@ -36,8 +36,7 @@ function commonPrefix(ids: string[]): string {
   return p;
 }
 
-function buildTour(cfg: any, key: string, grupo: string) {
-  const apt = cfg.buildings[0].apartments[0];
+function buildTour(apt: any, key: string, grupo: string) {
   const scenes: any[] = apt.scenes;
   const prefix = commonPrefix(scenes.map((s) => s.id));
   const shortKey = (id: string) => id.slice(prefix.length);
@@ -82,8 +81,12 @@ function buildTour(cfg: any, key: string, grupo: string) {
   };
 }
 
+const [aptA, aptB] = portalDelRio.buildings[0].apartments;
 const TOURS = {
-  a: buildTour(portalDelRio, 'a', 'portal-del-rio'),
+  a: buildTour(aptA, 'a', 'portal-del-rio'),
+  b: buildTour(aptB, 'b', 'portal-del-rio'),
+  // Zonas comunes: grupo propio, asi no se alterna con los apartamentos.
+  z: buildTour(portalDelRio.amenities, 'z', 'zonas-comunes'),
 };
 
 const bloque =

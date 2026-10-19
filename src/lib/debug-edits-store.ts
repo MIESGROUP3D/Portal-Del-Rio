@@ -130,6 +130,22 @@ export const useDebugEdits = create<DebugEditsState>()(
     {
       name: 'tour-debug-edits-v1',
       partialize: (s) => ({ moved: s.moved, added: s.added, removed: s.removed, variantBtn: s.variantBtn }),
+      // Repara ediciones guardadas con ids repetidos (versiones anteriores podian crearlos):
+      // con ids duplicados React confunde los spots y el boton × no los quita.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<DebugEditsState>;
+        const added: Record<string, HotspotConfig[]> = {};
+        for (const [sceneId, list] of Object.entries(p.added ?? {})) {
+          const seen = new Set<string>();
+          added[sceneId] = list.map((h) => {
+            let id = h.id;
+            for (let n = 2; seen.has(id); n++) id = `${h.id}-${n}`;
+            seen.add(id);
+            return id === h.id ? h : { ...h, id };
+          });
+        }
+        return { ...current, ...p, added };
+      },
     },
   ),
 );
@@ -155,8 +171,11 @@ export function effectiveHotspots(
           ? { ...h, ...moved[h.id], status: 'moved' as const }
           : { ...h, status: 'config' as const },
       ),
-    // Un spot nuevo que ya se pego en tour.config.ts deja de contar como nuevo
-    ...(edits.added[scene.id] ?? []).filter((h) => !inConfig.has(h.id)).map((h) => ({ ...h, status: 'added' as const })),
+    // Un spot nuevo que ya se pego en tour.config.ts deja de contar como nuevo. Excepcion: si el
+    // spot de config con ese id fue borrado en debug, el nuevo lo reemplaza y debe verse.
+    ...(edits.added[scene.id] ?? [])
+      .filter((h) => !inConfig.has(h.id) || removed.has(h.id))
+      .map((h) => ({ ...h, status: 'added' as const })),
   ];
 }
 

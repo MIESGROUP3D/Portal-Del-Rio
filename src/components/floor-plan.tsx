@@ -52,9 +52,17 @@ export default function FloorPlan() {
   const eventToPct = (e: React.MouseEvent | MouseEvent) => {
     const svg = svgRef.current;
     if (!svg) return null;
-    const rect = svg.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    // El viewBox se ajusta con "meet" dentro del <svg>: hay que pasar de pantalla a
+    // coordenadas del viewBox (no al rect del elemento) para que el % sea el de la imagen.
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const local = pt.matrixTransform(ctm.inverse());
+    const vb = svg.viewBox.baseVal;
+    const x = (local.x / vb.width) * 100;
+    const y = (local.y / vb.height) * 100;
     return { x: Math.max(0, Math.min(100, Math.round(x * 10) / 10)), y: Math.max(0, Math.min(100, Math.round(y * 10) / 10)) };
   };
 
@@ -155,12 +163,19 @@ export default function FloorPlan() {
   // Sin habitaciones (p.ej. Amenities) no hay plano que mostrar.
   if (!rooms.length) return null;
 
-  const svgWidth = expanded ? 900 : 320;
-  const svgHeight = expanded ? 600 : 240;
-
   // Scale rooms proportionally
   const planW = floorPlan?.width ?? 900;
   const planH = floorPlan?.height ?? 600;
+
+  // Con imagen real, el viewBox adopta la proporcion de la imagen (floorPlan.width/height):
+  // asi dotX/dotY son % de la imagen y quedan alineados en el plano chico y en el expandido.
+  // Se encaja DENTRO de la caja base (900x600 / 320x240) para que burbujas, conos y textos
+  // (en unidades del viewBox) tengan el mismo tamano en planos horizontales y verticales.
+  const baseW = expanded ? 900 : 320;
+  const baseH = expanded ? 600 : 240;
+  const planAspect = planW / planH;
+  const svgWidth = hasBackgroundImage ? Math.min(baseW, baseH * planAspect) : baseW;
+  const svgHeight = hasBackgroundImage ? svgWidth / planAspect : baseH;
   const scaleX = svgWidth / planW;
   const scaleY = svgHeight / planH;
 
@@ -249,7 +264,7 @@ export default function FloorPlan() {
       {/* Overlay backdrop when expanded */}
       {expanded && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998] transition-opacity duration-300"
+          className="fixed inset-0 bg-[#1C2430]/40 backdrop-blur-sm z-[9998] transition-opacity duration-300"
           onClick={toggleExpand}
           aria-hidden
         />
@@ -409,7 +424,7 @@ export default function FloorPlan() {
                   const rh = room.height * scaleY;
 
                   // Tamano burbuja: mas pequena en minimizado para no saturar
-                  const bubbleR = expanded ? 20 : 6;
+                  const bubbleR = expanded ? 15 : 6;
                   // Radar tamano (puede salirse de la habitacion)
                   const coneR = expanded ?90:50;
                   const halfRad = (45 * Math.PI) / 180;
@@ -463,7 +478,7 @@ export default function FloorPlan() {
                             cx={dot.cx}
                             cy={dot.cy}
                             fill="none"
-                            stroke="#E3000F"
+                            stroke="#F4AC5C"
                             strokeWidth={expanded ? 2.5 : 2}
                             opacity={0.7}
                             className="fp-radar-ping pointer-events-none"
@@ -475,8 +490,8 @@ export default function FloorPlan() {
                           >
                             <path
                               d={`M ${dot.cx} ${dot.cy} L ${lx} ${ly} A ${coneR} ${coneR} 0 0 1 ${rx2} ${ry2} Z`}
-                              fill="rgba(227,0,15,0.16)"
-                              stroke="rgba(227,0,15,0.55)"
+                              fill="rgba(244,172,92,0.16)"
+                              stroke="rgba(244,172,92,0.55)"
                               strokeWidth={expanded ? 2 : 1.5}
                               strokeLinejoin="round"
                               filter="url(#fp-shadow)"
@@ -511,7 +526,7 @@ export default function FloorPlan() {
                         cx={dot.cx}
                         cy={dot.cy}
                         r={isCurrent ? bubbleR : bubbleR - 1}
-                        fill="#E3000F"
+                        fill="#F4AC5C"
                         stroke="#FFFFFF"
                         strokeWidth={isCurrent ? 2 : 1.5}
                         className={isCurrent ? '' : 'fp-bubble-pulse transition-all duration-300'}

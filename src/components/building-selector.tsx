@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTourStore } from '@/lib/tour-store';
 import { Bed, Bath, Maximize2, Eye, ArrowRight, Clock, Sparkles } from 'lucide-react';
 import type { BuildingConfig, ApartmentConfig } from '@/lib/tour-types';
@@ -28,6 +28,10 @@ function isApartmentAvailable(apt: ApartmentConfig): boolean {
   });
 }
 
+// Proporcion de la foto de fondo (public/building.jpg): sirve para ubicar los ojos sobre la imagen.
+const BG_W = 2000;
+const BG_H = 1125;
+
 const BEIGE = '#FFFFFF';
 
 export default function BuildingSelector() {
@@ -37,8 +41,7 @@ export default function BuildingSelector() {
   // Amenities (recorrido 360 de zonas comunes). Al hacer click abrimos su
   // recorrido empezando por la escena de Piscina.
   const amenities = config.amenities;
-  const amenitiesStart =
-    amenities?.scenes.find((s) => s.id === 'va-am-piscina')?.id ?? amenities?.scenes[0]?.id;
+  const amenitiesStart = amenities?.scenes[0]?.id;
 
   /* ── Modo debug (?debug=1): arrastrar el ojo para recolocarlo ──
      Se resuelve DESPUÉS de montar para no romper la hidratación (el server
@@ -47,6 +50,31 @@ export default function BuildingSelector() {
   useEffect(() => {
     setDebugEnabled(window.location.search.includes('debug=1'));
   }, []);
+  /* ── Coordenadas sobre la imagen ──
+     La foto de fondo usa object-cover: segun la pantalla se recorta. hotspotX/hotspotY
+     son % de LA IMAGEN (no de la ventana), asi cada ojo se queda sobre su edificio. */
+  const [vp, setVp] = useState({ w: 1920, h: 1080 });
+  useEffect(() => {
+    const update = () => setVp({ w: window.innerWidth, h: window.innerHeight });
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  const cover = useMemo(() => {
+    const scale = Math.max(vp.w / BG_W, vp.h / BG_H);
+    const w = BG_W * scale;
+    const h = BG_H * scale;
+    return { w, h, offX: (vp.w - w) / 2, offY: (vp.h - h) / 2 };
+  }, [vp]);
+  /** % de la imagen -> % de la ventana (se acota para que el ojo no quede fuera en moviles verticales). */
+  const edge = vp.w < 768 ? 20 : 6; // en moviles el ojo y su etiqueta necesitan mas margen lateral
+  const toView = useCallback(
+    (x: number, y: number) => ({
+      x: Math.max(edge, Math.min(100 - edge, ((cover.offX + (x / 100) * cover.w) / vp.w) * 100)),
+      y: Math.max(8, Math.min(92, ((cover.offY + (y / 100) * cover.h) / vp.h) * 100)),
+    }),
+    [cover, vp, edge],
+  );
   const [overrides, setOverrides] = useState<Record<string, { x: number; y: number }>>({});
   const [dragId, setDragId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
@@ -54,8 +82,10 @@ export default function BuildingSelector() {
   useEffect(() => {
     if (!dragId) return;
     const onMove = (e: MouseEvent) => {
-      const x = Math.max(0, Math.min(100, Math.round((e.clientX / window.innerWidth) * 1000) / 10));
-      const y = Math.max(0, Math.min(100, Math.round((e.clientY / window.innerHeight) * 1000) / 10));
+      const ix = ((e.clientX - cover.offX) / cover.w) * 100;
+      const iy = ((e.clientY - cover.offY) / cover.h) * 100;
+      const x = Math.max(0, Math.min(100, Math.round(ix * 10) / 10));
+      const y = Math.max(0, Math.min(100, Math.round(iy * 10) / 10));
       setOverrides((prev) => ({ ...prev, [dragId]: { x, y } }));
     };
     const onUp = () => setDragId(null);
@@ -65,7 +95,7 @@ export default function BuildingSelector() {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     };
-  }, [dragId]);
+  }, [dragId, cover]);
 
   const copyHotspot = useCallback((aptId: string, x: number, y: number) => {
     try {
@@ -93,7 +123,7 @@ export default function BuildingSelector() {
 
   return (
     <div
-      className="fixed inset-0 z-[200] bg-black overflow-hidden"
+      className="fixed inset-0 z-[200] bg-[#1C2430] overflow-hidden"
       style={{ animation: 'selectorFadeIn 0.9s cubic-bezier(0.4,0,0.2,1) both' }}
     >
       {/* ── Background image ── (movil: versión ligera de 1600px) */}
@@ -107,7 +137,7 @@ export default function BuildingSelector() {
             fetchPriority="high"
           />
         </picture>
-        <div className="absolute inset-0 bg-black/15" />
+        <div className="absolute inset-0 bg-[#1C2430]/15" />
       </div>
 
       {/* ── Top header ── (pointer-events-none: no debe tapar los ojos) */}
@@ -152,6 +182,7 @@ export default function BuildingSelector() {
               onLeave={() => setHoveredApt(null)}
               onClick={() => available && setApartment(apt)}
               debugEnabled={debugEnabled}
+              toView={toView}
               override={overrides[apt.id]}
               isDragging={dragId === apt.id}
               onDragStart={() => setDragId(apt.id)}
@@ -175,6 +206,7 @@ export default function BuildingSelector() {
             onClick={() => amenitiesStart && setApartmentAtScene(amenities, amenitiesStart)}
             isAmenity
             debugEnabled={debugEnabled}
+            toView={toView}
             override={overrides[amenities.id]}
             isDragging={dragId === amenities.id}
             onDragStart={() => setDragId(amenities.id)}
@@ -221,7 +253,7 @@ export default function BuildingSelector() {
 // ═══════════════════════════════════════════════════════════════════
 function BuildingHotspot({
   apt, building, available, isHovered, onHover, onLeave, onClick,
-  debugEnabled = false, override, isDragging = false, onDragStart, onCopy, onReset, copied = false,
+  debugEnabled = false, toView, override, isDragging = false, onDragStart, onCopy, onReset, copied = false,
   isAmenity = false,
 }: {
   apt: ApartmentConfig;
@@ -233,6 +265,8 @@ function BuildingHotspot({
   onClick: () => void;
   debugEnabled?: boolean;
   override?: { x: number; y: number };
+  /** Convierte % de la imagen a % de la ventana (ver BuildingSelector). */
+  toView: (x: number, y: number) => { x: number; y: number };
   isDragging?: boolean;
   onDragStart?: () => void;
   onCopy?: (x: number, y: number) => void;
@@ -246,7 +280,8 @@ function BuildingHotspot({
   const baseY = override?.y ?? apt.hotspotY ?? (65 - (apt.floor / (floors - 1 || 1)) * 35);
 
   // Decide si la card abre hacia la izquierda o derecha según posición horizontal
-  const cardAlignRight = baseX > 55;
+  const view = toView(baseX, baseY);
+  const cardAlignRight = view.x > 55;
 
   /* ── Dirección de despliegue de la card (config: apt.cardDir) ──
      'up' (def) · 'down' · 'left' · 'right'. Calcula posición, animación de
@@ -289,7 +324,7 @@ function BuildingHotspot({
   return (
     <div
       className="absolute"
-      style={{ left: `${baseX}%`, top: `${baseY}%`, transform: 'translate(-50%, -50%)' }}
+      style={{ left: `${view.x}%`, top: `${view.y}%`, transform: 'translate(-50%, -50%)' }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
     >

@@ -236,7 +236,7 @@ const HOTSPOT_CSS = `
    Logo de marca + texto + barra de progreso roja con porcentaje. Se inyecta
    en runtime porque la URL del logo depende del basePath (assetPath). */
 const loaderCss = (logoUrl: string) => `
-.pnlm-container { background: #333333 radial-gradient(ellipse at 50% 50%, rgba(118,110,107,0.18) 0%, transparent 60%) !important; }
+.pnlm-container { background: #1C2430 radial-gradient(ellipse at 50% 50%, rgba(244,172,92,0.18) 0%, transparent 60%) !important; }
 .pnlm-load-box {
   background: transparent !important;
   width: 260px !important;
@@ -268,14 +268,14 @@ const loaderCss = (logoUrl: string) => `
   background: rgba(255,255,255,0.15);
   overflow: hidden;
 }
-.pnlm-lbar-fill { background: #E3000F !important; transition: width 0.25s ease; }
+.pnlm-lbar-fill { background: #F4AC5C !important; transition: width 0.25s ease; }
 .pnlm-load-box .pnlm-lmsg {
   margin: 10px 0 0 !important;
   font-size: 9px;
   letter-spacing: 0.2em;
   color: rgba(255,255,255,0.45);
 }
-.pnlm-loading { background-color: #E3000F !important; }
+.pnlm-loading { background-color: #F4AC5C !important; }
 `;
 
 /* ------------------------------------------------------------------ */
@@ -405,7 +405,7 @@ function buildVariantHotspotDiv(nextVariantLabel: string): HTMLDivElement {
   circle.className = 'pano-bubble-circle';
   circle.style.background = '#FFFFFF';
   circle.style.borderColor = 'rgba(255,255,255,0.45)';
-  circle.style.color = '#0A0A0A';
+  circle.style.color = '#1C2430';
   circle.style.boxShadow = '0 4px 20px rgba(255, 255, 255,0.4), 0 2px 8px rgba(0,0,0,0.35)';
 
   const rings = document.createElement('div');
@@ -414,7 +414,7 @@ function buildVariantHotspotDiv(nextVariantLabel: string): HTMLDivElement {
 
   // Icono de capas (Layers) en SVG, 20x20
   const iconWrap = document.createElement('div');
-  iconWrap.style.cssText = 'position:relative;z-index:1;display:flex;align-items:center;justify-content:center;color:#0A0A0A;';
+  iconWrap.style.cssText = 'position:relative;z-index:1;display:flex;align-items:center;justify-content:center;color:#1C2430;';
   iconWrap.innerHTML = `
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -430,7 +430,7 @@ function buildVariantHotspotDiv(nextVariantLabel: string): HTMLDivElement {
   pill.className = 'pano-bubble-label';
   pill.textContent = `Ver ${nextVariantLabel.toLowerCase()}`;
   pill.style.background = 'rgba(255, 255, 255,0.95)';
-  pill.style.color = '#0A0A0A';
+  pill.style.color = '#1C2430';
   pill.style.fontWeight = '700';
   wrapper.appendChild(pill);
 
@@ -816,6 +816,13 @@ const PanoViewer = forwardRef<PanoViewerHandle, PanoViewerProps>(
 
     // Distinguir el tipo de transicion: 'scene' (cambio de cuarto) vs 'variant' (mismo cuarto)
     const lastSceneRef = useRef<string>('');
+    // Rooms del plano del apartamento actual (para mantener la direccion de la mirada entre
+    // escenas). En ref para no tener que meter el apartamento en las deps de la transicion.
+    // Se sincroniza en un efecto declarado ANTES del de transicion, asi ya esta al dia cuando corre.
+    const floorPlanRoomsRef = useRef(selectedApartment?.floorPlan?.rooms ?? []);
+    useEffect(() => {
+      floorPlanRoomsRef.current = selectedApartment?.floorPlan?.rooms ?? [];
+    }, [selectedApartment]);
     const [transitionMode, setTransitionMode] = useState<'scene' | 'variant' | 'none'>('none');
 
     /* ── Cambio de escena: DOUBLE BUFFER + CROSSFADE ──────────────
@@ -869,9 +876,21 @@ const PanoViewer = forwardRef<PanoViewerHandle, PanoViewerProps>(
       } else {
         try {
           if (activeViewer) {
+            // Cada panorama tiene su propio "norte". El radarYawOffset del plano convierte
+            // el yaw de una escena a una direccion real del plano (yaw + offset), asi que al
+            // cambiar de escena se mantiene la direccion real: el usuario sigue mirando hacia
+            // el mismo punto. Si alguna de las dos escenas no esta en el plano (p.ej. zonas
+            // comunes) se conserva el yaw tal cual.
+            const rooms = floorPlanRoomsRef.current;
+            const fromRoom = rooms.find((r) => r.sceneId === lastSceneRef.current);
+            const toRoom = rooms.find((r) => r.sceneId === currentSceneId);
+            const headingShift =
+              fromRoom && toRoom && fromRoom !== toRoom
+                ? (fromRoom.radarYawOffset ?? 0) - (toRoom.radarYawOffset ?? 0)
+                : 0;
             preservedView = {
               pitch: activeViewer.getPitch(),
-              yaw: activeViewer.getYaw() + pendingYawOffsetRef.current,
+              yaw: activeViewer.getYaw() + headingShift + pendingYawOffsetRef.current,
               hfov: activeViewer.getHfov(),
             };
           }
@@ -1128,7 +1147,7 @@ const PanoViewer = forwardRef<PanoViewerHandle, PanoViewerProps>(
           height: '100%',
           overflow: 'hidden',
           borderRadius: 8,
-          background: '#0a0a0a',
+          background: '#1C2430',
         }}
       >
         {/* Double-buffer Pannellum containers — Layer A */}
@@ -1187,7 +1206,7 @@ const PanoViewer = forwardRef<PanoViewerHandle, PanoViewerProps>(
 
         {/* Loading state */}
         {!scriptReady && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, zIndex: 100, background: '#000' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, zIndex: 100, background: '#1C2430' }}>
             <BrandLogo style={{ width: 180 }} />
             <div style={{ position: 'relative', width: 36, height: 36, marginTop: 28, marginBottom: 20 }}>
               <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid transparent', borderTopColor: '#FFFFFF', animation: 'pano-spin 1.2s linear infinite' }} />

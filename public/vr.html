@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Valle Alto — Recorrido VR</title>
+  <title>Portal del Río — Recorrido VR</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
-    html, body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: system-ui, sans-serif; }
+    html, body { margin: 0; padding: 0; background: #1C2430; overflow: hidden; font-family: system-ui, sans-serif; }
     #ui { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
     .btn {
       position: fixed; pointer-events: auto; text-decoration: none;
-      background: rgba(0,0,0,0.55); border: 1px solid rgba(255, 255, 255,0.25);
+      background: rgba(28,36,48,0.55); border: 1px solid rgba(244,172,92,0.25);
       color: rgba(255, 255, 255,0.9); backdrop-filter: blur(12px);
       border-radius: 999px; padding: 10px 18px; font-size: 13px; font-weight: 600;
       display: flex; align-items: center; gap: 8px;
@@ -26,7 +26,7 @@
     }
     #title {
       top: 16px; left: 50%; transform: translateX(-50%); position: fixed;
-      background: rgba(0,0,0,0.45); border: 1px solid rgba(255, 255, 255,0.18);
+      background: rgba(28,36,48,0.45); border: 1px solid rgba(244,172,92,0.18);
       color: #FFFFFF; backdrop-filter: blur(12px); border-radius: 999px;
       padding: 8px 18px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
     }
@@ -37,7 +37,7 @@
     #enter {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
       pointer-events: auto; display: flex; align-items: center; gap: 10px;
-      background: #FFFFFF; color: #1A1A1A; border: none; border-radius: 999px;
+      background: #F4AC5C; color: #1C2430; border: none; border-radius: 999px;
       padding: 15px 34px; font-family: inherit; font-size: 15px; font-weight: 700;
       letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
       box-shadow: 0 8px 24px rgba(0,0,0,0.35);
@@ -46,7 +46,7 @@
     #enter svg { width: 21px; height: 21px; flex: none; }
     /* El translateX(-50%) hay que repetirlo: transform reemplaza, no acumula */
     #enter:hover {
-      background: #FFFFFF;
+      background: #F4AC5C;
       transform: translateX(-50%) translateY(-1px);
       box-shadow: 0 11px 28px rgba(0,0,0,0.42);
     }
@@ -54,14 +54,14 @@
       transform: translateX(-50%) translateY(0);
       box-shadow: 0 5px 16px rgba(0,0,0,0.35);
     }
-    #enter:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 3px; }
+    #enter:focus-visible { outline: 2px solid #F4AC5C; outline-offset: 3px; }
   </style>
 </head>
 <body>
   <a-scene
     vr-mode-ui="enabled: true"
     renderer="colorManagement: true; antialias: true"
-    loading-screen="dotsColor: #FFFFFF; backgroundColor: #0a0a0a"
+    loading-screen="dotsColor: #F4AC5C; backgroundColor: #1C2430"
     background="transparent: true">
 
     <a-assets timeout="15000" id="assets"></a-assets>
@@ -128,33 +128,655 @@
         "id": "a",
         "grupo": "portal-del-rio",
         "name": "Apartamento Tipo A",
-        "area": 60,
-        "inicio": "sala",
+        "area": 69,
+        "areaPrivada": 62,
+        "inicio": "acceso",
         "scenes": {
-          "sala": {
-            "id": "portal-del-rio-sala",
-            "name": "Sala",
-            "img": "projects/melendez/portal-del-rio/panoramas/vr/sala.jpg",
+          "acceso": {
+            "id": "pr-a-acceso",
+            "name": "Acceso",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/acceso.jpg",
             "hotspots": [
               {
-                "label": "Cocina",
-                "yaw": 90,
-                "pitch": 0,
-                "to": "cocina",
+                "label": "Sala y comedor",
+                "yaw": 39.1,
+                "pitch": -8.4,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba auxiliar",
+                "yaw": 85.4,
+                "pitch": -1.9,
+                "to": "hab-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Hall",
+                "yaw": 82.1,
+                "pitch": -17,
+                "to": "hall",
                 "kind": "scene"
               }
             ]
           },
-          "cocina": {
-            "id": "portal-del-rio-cocina",
-            "name": "Cocina",
-            "img": "projects/melendez/portal-del-rio/panoramas/vr/cocina.jpg",
+          "sala": {
+            "id": "pr-a-sala",
+            "name": "Sala y comedor",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/sala.jpg",
+            "hotspots": [
+              {
+                "label": "Balcón",
+                "yaw": 20.1,
+                "pitch": -2.2,
+                "to": "balcon",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -122,
+                "pitch": -5.8,
+                "to": "acceso",
+                "kind": "scene"
+              },
+              {
+                "label": "Hall",
+                "yaw": 115.9,
+                "pitch": -19.2,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Estudio",
+                "yaw": 58,
+                "pitch": -3,
+                "to": "estudio",
+                "kind": "scene"
+              }
+            ]
+          },
+          "balcon": {
+            "id": "pr-a-balcon",
+            "name": "Balcón",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/balcon.jpg",
+            "hotspots": [
+              {
+                "label": "Sala y comedor",
+                "yaw": 1.4,
+                "pitch": -4.5,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Estudio",
+                "yaw": -54.9,
+                "pitch": -4.8,
+                "to": "estudio",
+                "kind": "scene"
+              },
+              {
+                "label": "Hall",
+                "yaw": -25,
+                "pitch": -3.4,
+                "to": "hall",
+                "kind": "scene"
+              }
+            ]
+          },
+          "estudio": {
+            "id": "pr-a-estudio",
+            "name": "Estudio",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/estudio.jpg",
+            "hotspots": [
+              {
+                "label": "Sala y comedor",
+                "yaw": -95,
+                "pitch": -5,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Hall",
+                "yaw": -159.4,
+                "pitch": -6,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Balcón",
+                "yaw": -49.1,
+                "pitch": -3.7,
+                "to": "balcon",
+                "kind": "scene"
+              },
+              {
+                "label": "Ver habitación flexible",
+                "yaw": 49.7,
+                "pitch": 4.2,
+                "to": "hab-flex",
+                "kind": "variant"
+              }
+            ]
+          },
+          "hab-flex": {
+            "id": "pr-a-hab-flex",
+            "name": "Habitación flexible",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/hab-flex.jpg",
+            "hotspots": [
+              {
+                "label": "Hall",
+                "yaw": -160,
+                "pitch": -14,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Ver estudio",
+                "yaw": 49.7,
+                "pitch": 4.4,
+                "to": "estudio",
+                "kind": "variant"
+              }
+            ]
+          },
+          "hall": {
+            "id": "pr-a-hall",
+            "name": "Hall",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/hall.jpg",
+            "hotspots": [
+              {
+                "label": "Alcoba auxiliar",
+                "yaw": 78.9,
+                "pitch": -4.5,
+                "to": "hab-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba principal",
+                "yaw": 177.1,
+                "pitch": -4.1,
+                "to": "hab-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño auxiliar",
+                "yaw": -118.3,
+                "pitch": -7.6,
+                "to": "bano-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Sala y comedor",
+                "yaw": -59.1,
+                "pitch": -5.5,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -89,
+                "pitch": -4.6,
+                "to": "acceso",
+                "kind": "scene"
+              },
+              {
+                "label": "Estudio",
+                "yaw": 3.5,
+                "pitch": -2.4,
+                "to": "estudio",
+                "kind": "scene"
+              }
+            ]
+          },
+          "hab-aux": {
+            "id": "pr-a-hab-aux",
+            "name": "Alcoba auxiliar",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/hab-aux.jpg",
+            "hotspots": [
+              {
+                "label": "Hall",
+                "yaw": -91.3,
+                "pitch": -33,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -89.5,
+                "pitch": -10.2,
+                "to": "acceso",
+                "kind": "scene"
+              }
+            ]
+          },
+          "hab-ppal": {
+            "id": "pr-a-hab-ppal",
+            "name": "Alcoba principal",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/hab-ppal.jpg",
+            "hotspots": [
+              {
+                "label": "Hall",
+                "yaw": -147.9,
+                "pitch": -31.3,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño principal",
+                "yaw": 120.2,
+                "pitch": 0.5,
+                "to": "bano-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño auxiliar",
+                "yaw": -169.4,
+                "pitch": -0.8,
+                "to": "bano-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Sala y comedor",
+                "yaw": -148.9,
+                "pitch": -4.6,
+                "to": "sala",
+                "kind": "scene"
+              }
+            ]
+          },
+          "bano-aux": {
+            "id": "pr-a-bano-aux",
+            "name": "Baño auxiliar",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/bano-aux.jpg",
+            "hotspots": [
+              {
+                "label": "Hall",
+                "yaw": 105,
+                "pitch": -5,
+                "to": "hall",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba principal",
+                "yaw": -178.1,
+                "pitch": -3,
+                "to": "hab-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Hall",
+                "yaw": 141.3,
+                "pitch": -37.1,
+                "to": "hall",
+                "kind": "scene"
+              }
+            ]
+          },
+          "bano-ppal": {
+            "id": "pr-a-bano-ppal",
+            "name": "Baño principal",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-a/vr/bano-ppal.jpg",
+            "hotspots": [
+              {
+                "label": "Alcoba principal",
+                "yaw": 175,
+                "pitch": -5,
+                "to": "hab-ppal",
+                "kind": "scene"
+              }
+            ]
+          }
+        }
+      },
+      "b": {
+        "id": "b",
+        "grupo": "portal-del-rio",
+        "name": "Apartamento Tipo B",
+        "area": 61,
+        "areaPrivada": 54,
+        "inicio": "acceso",
+        "scenes": {
+          "acceso": {
+            "id": "pr-b-acceso",
+            "name": "Acceso",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/acceso.jpg",
             "hotspots": [
               {
                 "label": "Sala",
-                "yaw": -90,
-                "pitch": 0,
+                "yaw": -68.5,
+                "pitch": -6.5,
                 "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Balcón",
+                "yaw": -82.8,
+                "pitch": -2.2,
+                "to": "balcon",
+                "kind": "scene"
+              }
+            ]
+          },
+          "sala": {
+            "id": "pr-b-sala",
+            "name": "Sala",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/sala.jpg",
+            "hotspots": [
+              {
+                "label": "Balcón",
+                "yaw": 78,
+                "pitch": -5,
+                "to": "balcon",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -75,
+                "pitch": -5,
+                "to": "acceso",
+                "kind": "scene"
+              },
+              {
+                "label": "Comedor",
+                "yaw": -3.8,
+                "pitch": -7.5,
+                "to": "comedor",
+                "kind": "scene"
+              }
+            ]
+          },
+          "balcon": {
+            "id": "pr-b-balcon",
+            "name": "Balcón",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/balcon.jpg",
+            "hotspots": [
+              {
+                "label": "Sala",
+                "yaw": 130,
+                "pitch": -8,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -172.2,
+                "pitch": -2.9,
+                "to": "acceso",
+                "kind": "scene"
+              },
+              {
+                "label": "Comedor",
+                "yaw": -150.7,
+                "pitch": -3.6,
+                "to": "comedor",
+                "kind": "scene"
+              },
+              {
+                "label": "Sala",
+                "yaw": -175.2,
+                "pitch": -23,
+                "to": "sala",
+                "kind": "scene"
+              }
+            ]
+          },
+          "comedor": {
+            "id": "pr-b-comedor",
+            "name": "Comedor",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/comedor.jpg",
+            "hotspots": [
+              {
+                "label": "Sala",
+                "yaw": 160,
+                "pitch": -5,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Acceso",
+                "yaw": -120.9,
+                "pitch": -5.4,
+                "to": "acceso",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba principal",
+                "yaw": 22.3,
+                "pitch": -2.8,
+                "to": "hab-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba auxiliar",
+                "yaw": 53.7,
+                "pitch": -3.3,
+                "to": "hab-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño auxiliar",
+                "yaw": -10.6,
+                "pitch": -3.6,
+                "to": "bano-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Ver opción flexible",
+                "yaw": -30,
+                "pitch": -35,
+                "to": "op-flexible",
+                "kind": "variant"
+              }
+            ]
+          },
+          "op-flexible": {
+            "id": "pr-b-op-flexible",
+            "name": "Opción flexible",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/op-flexible.jpg",
+            "hotspots": [
+              {
+                "label": "Sala",
+                "yaw": -172,
+                "pitch": -5,
+                "to": "sala",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba auxiliar",
+                "yaw": 170,
+                "pitch": -5,
+                "to": "hab-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Ver comedor",
+                "yaw": -20,
+                "pitch": -35,
+                "to": "comedor",
+                "kind": "variant"
+              }
+            ]
+          },
+          "hab-aux": {
+            "id": "pr-b-hab-aux",
+            "name": "Alcoba auxiliar",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/hab-aux.jpg",
+            "hotspots": [
+              {
+                "label": "Comedor",
+                "yaw": -171.6,
+                "pitch": -6.4,
+                "to": "comedor",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño auxiliar",
+                "yaw": -146.7,
+                "pitch": -2.2,
+                "to": "bano-aux",
+                "kind": "scene"
+              }
+            ]
+          },
+          "hab-ppal": {
+            "id": "pr-b-hab-ppal",
+            "name": "Alcoba principal",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/hab-ppal.jpg",
+            "hotspots": [
+              {
+                "label": "Comedor",
+                "yaw": -125,
+                "pitch": -5,
+                "to": "comedor",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño principal",
+                "yaw": -34.7,
+                "pitch": -2.7,
+                "to": "bano-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Baño auxiliar",
+                "yaw": -94.7,
+                "pitch": -4.6,
+                "to": "bano-aux",
+                "kind": "scene"
+              }
+            ]
+          },
+          "bano-aux": {
+            "id": "pr-b-bano-aux",
+            "name": "Baño auxiliar",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/bano-aux.jpg",
+            "hotspots": [
+              {
+                "label": "Alcoba auxiliar",
+                "yaw": -142.5,
+                "pitch": -4.9,
+                "to": "hab-aux",
+                "kind": "scene"
+              },
+              {
+                "label": "Comedor",
+                "yaw": 100,
+                "pitch": -5,
+                "to": "comedor",
+                "kind": "scene"
+              },
+              {
+                "label": "Alcoba principal",
+                "yaw": 166.6,
+                "pitch": -5.5,
+                "to": "hab-ppal",
+                "kind": "scene"
+              },
+              {
+                "label": "Sala",
+                "yaw": -98.1,
+                "pitch": -4.7,
+                "to": "sala",
+                "kind": "scene"
+              }
+            ]
+          },
+          "bano-ppal": {
+            "id": "pr-b-bano-ppal",
+            "name": "Baño principal",
+            "img": "projects/melendez/portal-del-rio/panoramas/tipo-b/vr/bano-ppal.jpg",
+            "hotspots": [
+              {
+                "label": "Alcoba principal",
+                "yaw": 175,
+                "pitch": -5,
+                "to": "hab-ppal",
+                "kind": "scene"
+              }
+            ]
+          }
+        }
+      },
+      "z": {
+        "id": "z",
+        "grupo": "zonas-comunes",
+        "name": "Zonas comunes",
+        "area": 0,
+        "inicio": "piscina",
+        "scenes": {
+          "piscina": {
+            "id": "pr-am-piscina",
+            "name": "Piscina",
+            "img": "projects/melendez/portal-del-rio/panoramas/areas/vr/piscina.jpg",
+            "hotspots": [
+              {
+                "label": "Salón social",
+                "yaw": 95.4,
+                "pitch": 6,
+                "to": "salon-social",
+                "kind": "scene"
+              }
+            ]
+          },
+          "bbq": {
+            "id": "pr-am-bbq",
+            "name": "BBQ",
+            "img": "projects/melendez/portal-del-rio/panoramas/areas/vr/bbq.jpg",
+            "hotspots": [
+              {
+                "label": "Piscina",
+                "yaw": -108.8,
+                "pitch": 2.5,
+                "to": "piscina",
+                "kind": "scene"
+              },
+              {
+                "label": "Salón social",
+                "yaw": 150.3,
+                "pitch": -0.8,
+                "to": "salon-social",
+                "kind": "scene"
+              },
+              {
+                "label": "Circuito de patinaje",
+                "yaw": 42.5,
+                "pitch": 0.6,
+                "to": "circuito",
+                "kind": "scene"
+              }
+            ]
+          },
+          "circuito": {
+            "id": "pr-am-circuito",
+            "name": "Circuito de patinaje",
+            "img": "projects/melendez/portal-del-rio/panoramas/areas/vr/circuito.jpg",
+            "hotspots": [
+              {
+                "label": "BBQ",
+                "yaw": -159.4,
+                "pitch": -0.6,
+                "to": "bbq",
+                "kind": "scene"
+              },
+              {
+                "label": "Salón social",
+                "yaw": 147.7,
+                "pitch": 2.3,
+                "to": "salon-social",
+                "kind": "scene"
+              }
+            ]
+          },
+          "salon-social": {
+            "id": "pr-am-salon-social",
+            "name": "Salón social",
+            "img": "projects/melendez/portal-del-rio/panoramas/areas/vr/salon-social.jpg",
+            "hotspots": [
+              {
+                "label": "BBQ",
+                "yaw": -21.3,
+                "pitch": -1.1,
+                "to": "bbq",
                 "kind": "scene"
               }
             ]
@@ -296,7 +918,7 @@
       ctx.arcTo(0, hh, 0, hh - r, r);
       ctx.arcTo(0, 0, r, 0, r);
       ctx.closePath();
-      ctx.fillStyle = 'rgba(10, 10, 10,0.86)';
+      ctx.fillStyle = 'rgba(28,36,48,0.86)';
       ctx.fill();
       ctx.strokeStyle = 'rgba(255, 255, 255,0.32)';
       ctx.lineWidth = 3;
@@ -330,7 +952,7 @@
         var cx = S / 2;
         ctx.beginPath();
         ctx.arc(cx, cx, S * 0.435, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(10, 10, 10,' + discAlpha + ')';
+        ctx.fillStyle = 'rgba(28,36,48,' + discAlpha + ')';
         ctx.fill();
         ctx.beginPath();
         ctx.arc(cx, cx, S * 0.445, 0, Math.PI * 2);
@@ -379,7 +1001,7 @@
     // TOUR apunta a TOURS.a o TOURS.b. Las claves de escena son iguales en los
     // dos ('acceso', 'estudio', …), así que al cambiar de apartamento se puede
     // aterrizar en la misma habitación en vez de volver al principio.
-    var TOUR = TOURS.b;
+    var TOUR = TOURS.a;
     var sceneKey = TOUR.inicio;
 
     /** Acepta la clave corta ('estudio') o el id completo del tour web
@@ -399,7 +1021,7 @@
     }
 
     function setTour(tourId, wantedScene) {
-      TOUR = TOURS[tourId] || TOURS.b;
+      TOUR = TOURS[tourId] || TOURS.a;
       preload(TOUR);
       updateSwitch();
       loadScene(resolveScene(TOUR, wantedScene) || TOUR.inicio);
@@ -552,8 +1174,8 @@
     var swapBtn = document.getElementById('swap');
     var swap3D  = document.getElementById('swap3d');
 
-    // Solo se alterna con otro tour del mismo proyecto (Valle Alto A↔B); Tierra Linda
-    // tiene un unico apartamento y no muestra el boton.
+    // Solo se alterna con otro tour del mismo proyecto (tipologías A↔B). Con un único apartamento
+    // no se muestra el boton.
     function otherTourId() {
       for (var t in TOURS) if (t !== TOUR.id && TOURS[t].grupo === TOUR.grupo) return t;
       return null;
