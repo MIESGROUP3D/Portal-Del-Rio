@@ -11,8 +11,6 @@
 //    - Calibrar yaw/pitch de los hotspots con ?debug=1 (son aproximados:
 //      salen de revisar a ojo cada panorama)
 //    - Calibrar dotX/dotY y radarYawOffset del plano con ?debug=1
-//    - Imagen de fachada del selector (public/building.jpg) y hotspotX/Y
-//    - Renders de zonas comunes para la galeria
 // ============================================================
 
 import type { HotspotConfig, SceneConfig, FloorPlanRoomConfig, TourConfig } from '@/lib/tour-types';
@@ -24,6 +22,7 @@ const PROYECTO     = 'portal-del-rio';
 const BASE  = `/projects/${CONSTRUCTORA}/${PROYECTO}`;
 const PANO  = (folder: 'tipo-a' | 'tipo-b' | 'areas', file: string) => assetPath(`${BASE}/panoramas/${folder}/${file}`);
 const PLAN  = (file: string) => assetPath(`${BASE}/floor-plans/${file}`);
+const GALLERY = (file: string) => assetPath(`${BASE}/images/gallery/${file}`);
 const BRAND = (file: string) => assetPath(`/projects/${CONSTRUCTORA}/branding/${file}`);
 
 // Prefijos de id de escena por apartamento
@@ -409,7 +408,9 @@ const templateConfig: TourConfig = {
     available: true,
     scenes: [
       amenityScene('piscina', 'Piscina', 'Piscina y zona húmeda', 'piscina.jpg', [
-        go(AM, 'piscina', 'salon-social', 'Salón social', 95.4, 6),
+        go(AM, 'piscina', 'salon-social', 'Salón social', 95.4, 1),
+        go(AM, 'piscina', 'bbq', 'BBQ', 66.4, 1.4),
+        go(AM, 'piscina', 'circuito', 'Circuito de patinaje', 52, 1.1),
       ]),
       amenityScene('bbq', 'BBQ', 'Zona de BBQ y pérgola', 'bbq.jpg', [
         go(AM, 'bbq', 'piscina', 'Piscina', -108.8, 2.5),
@@ -431,8 +432,44 @@ const templateConfig: TourConfig = {
   showFloorPlan: true,
   showWelcome: true,
 
-  // Renders de zonas comunes: pendientes de recibir del cliente.
-  gallery: [],
+  // ─── Galería (renders y fotomontajes), con pestañas por categoría ────
+  gallery: [
+    ...([
+      ['sala', 'Sala'],
+      ['cocina', 'Cocina'],
+      ['estudio', 'Estudio'],
+      ['alcoba-principal', 'Alcoba principal'],
+      ['alcoba-auxiliar', 'Alcoba auxiliar'],
+      ['bano-principal', 'Baño principal'],
+      ['balcon', 'Balcón'],
+      ['zona-de-oficios', 'Zona de oficios'],
+    ] as const).map(([file, title]) => ({
+      id: `apto-${file}`,
+      src: GALLERY(`aptos/${file}.jpg`),
+      title,
+      caption: 'Apartamento Tipo A · 69 m²',
+      category: 'Apartamentos',
+    })),
+    ...([
+      ['porteria', 'Portería'],
+      ['piscina', 'Piscina'],
+      ['gimnasio', 'Gimnasio'],
+      ['coworking', 'Coworking'],
+      ['juegos-infantiles', 'Juegos infantiles'],
+    ] as const).map(([file, title]) => ({
+      id: `zc-${file}`,
+      src: GALLERY(`zonas-comunes/${file}.jpg`),
+      title,
+      category: 'Zonas comunes',
+    })),
+    ...[1, 2, 3].map((n) => ({
+      id: `fotomontaje-${n}`,
+      src: GALLERY(`fotomontajes/fotomontaje-${n}.jpg`),
+      title: `Fotomontaje ${n}`,
+      caption: 'Imagen ilustrativa del proyecto en su entorno',
+      category: 'Fotomontajes',
+    })),
+  ],
 
   // ─── Plantas arquitectónicas (versión con áreas) ────────────────────
   plantas: [

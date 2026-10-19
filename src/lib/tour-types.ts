@@ -197,6 +197,9 @@ export interface GalleryImageConfig {
   src: string;
   title?: string;
   caption?: string;
+  /** Categoria de la galeria (p.ej. 'Apartamento', 'Zonas comunes'). Si hay varias,
+   *  el visor muestra pestañas para filtrar; el orden es el de su primera aparicion. */
+  category?: string;
 }
 
 // Ajustes globales del modo reproducción (velocidades, holds, HFOV).

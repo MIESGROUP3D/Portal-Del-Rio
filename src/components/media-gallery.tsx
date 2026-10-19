@@ -11,19 +11,32 @@ export default function MediaGallery() {
 
   const [index, setIndex] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [category, setCategory] = useState<string | null>(null);
 
-  const items =
+  const allItems =
     galleryOpen === 'gallery'
       ? config.gallery ?? []
       : galleryOpen === 'plantas'
         ? config.plantas ?? []
         : [];
 
+  // Categorias en orden de aparicion; las pestañas solo se muestran si hay mas de una.
+  const categories = [...new Set(allItems.map((it) => it.category).filter((c): c is string => Boolean(c)))];
+  const activeCategory = categories.length > 1 ? (category ?? categories[0]) : null;
+  const items = activeCategory ? allItems.filter((it) => it.category === activeCategory) : allItems;
+
+  const selectCategory = (c: string) => {
+    setCategory(c);
+    setIndex(0);
+    setImgLoaded(false);
+  };
+
   // Reset al abrir
   useEffect(() => {
     if (galleryOpen) {
       setIndex(0);
       setImgLoaded(false);
+      setCategory(null);
     }
   }, [galleryOpen]);
 
@@ -128,6 +141,39 @@ export default function MediaGallery() {
             <X size={16} />
           </button>
         </div>
+
+        {/* Pestañas de categoria (solo si la galeria tiene varias) */}
+        {activeCategory && (
+          <div
+            className="flex items-center justify-center gap-2 px-4 pt-4 overflow-x-auto"
+            onClick={(e) => e.stopPropagation()}
+            role="tablist"
+            aria-label="Categorías de la galería"
+          >
+            {categories.map((c) => {
+              const active = c === activeCategory;
+              const count = allItems.filter((it) => it.category === c).length;
+              return (
+                <button
+                  key={c}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => selectCategory(c)}
+                  className="shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold tracking-wide transition-colors duration-200 select-none"
+                  style={{
+                    background: active ? '#F4AC5C' : 'rgba(255, 255, 255,0.06)',
+                    color: active ? '#1C2430' : 'rgba(255, 255, 255,0.7)',
+                    border: active ? '1px solid #F4AC5C' : '1px solid rgba(255, 255, 255,0.14)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {c}
+                  <span style={{ marginLeft: 6, opacity: 0.6, fontWeight: 500 }}>{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Stage */}
         <div
