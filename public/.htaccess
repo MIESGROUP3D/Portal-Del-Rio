@@ -1,0 +1,34 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Tour 360 — Portal del Río (Constructora Meléndez)
+# Evita que el CDN/optimizador de imágenes (Hostinger hcdn, LiteSpeed u otros)
+# REDIMENSIONE o RECOMPRIMA los panoramas. La directiva estándar "no-transform"
+# (RFC 7234) indica a cualquier intermediario que NO puede transformar el
+# contenido. Sin esto, los equirectangulares de 8000px se degradan y el tour se
+# ve borroso.
+# ─────────────────────────────────────────────────────────────────────────────
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png|webp|gif|avif|svg)$">
+    Header set Cache-Control "public, max-age=31536000, no-transform"
+    Header set X-Content-Type-Options "nosniff"
+  </FilesMatch>
+</IfModule>
+
+# MIME correctos por si el servidor no los define (imágenes, JS, CSS, fuentes)
+<IfModule mod_mime.c>
+  AddType image/jpeg             .jpg .jpeg
+  AddType image/png              .png
+  AddType image/webp             .webp
+  AddType image/svg+xml          .svg
+  AddType application/javascript .js
+  AddType text/css               .css
+  AddType font/woff2             .woff2
+</IfModule>
+
+# Archivo de inicio de la carpeta
+DirectoryIndex index.html
+
+# Permite el acceso a todos los archivos del tour
+<IfModule mod_authz_core.c>
+  Require all granted
+</IfModule>

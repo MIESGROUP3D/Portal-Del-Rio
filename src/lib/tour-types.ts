@@ -1,0 +1,254 @@
+// ─── Theme Configuration ──────────────────────────────────────────────
+export interface ThemeConfig {
+  primary: string;
+  secondary: string;
+  panelBg: string;
+  textPrimary: string;
+  textMuted: string;
+  borderColor: string;
+  fontFamily: string;
+}
+
+// ─── Hotspot ──────────────────────────────────────────────────────────
+export interface HotspotConfig {
+  id: string;
+  pitch: number;
+  yaw: number;
+  type: 'scene' | 'info' | 'url';
+  label: string;
+  description?: string;
+  targetSceneId?: string;
+  url?: string;
+}
+
+// ─── Scene ────────────────────────────────────────────────────────────
+// Variante visual de una escena (mismo cuarto, distinto amueblado/uso).
+// Ej: "Espacio Multiple" puede verse como alcoba o como estudio.
+// Si la escena tiene variants[], se muestra un boton flotante para alternar.
+export interface SceneVariantConfig {
+  videoScreen?: PanoramaVideoConfig;
+  id: string;
+  label: string;
+  /** Panorama de la variante (opcional si linkSceneId esta presente). */
+  panorama?: string;
+  thumbnail?: string;
+  defaultView?: {
+    pitch: number;
+    yaw: number;
+    hfov: number;
+  };
+  /** Si esta presente, al activar esta variante se NAVEGA a esa escena
+   * en lugar de cambiar la variante localmente. Util cuando el "render
+   * alternativo" en realidad corresponde fisicamente a otro cuarto. */
+  linkSceneId?: string;
+  /** Variante a activar automaticamente en la escena destino (opcional). */
+  linkVariantId?: string;
+  /**
+   * Offset de yaw (grados) que se SUMA a la direccion de mirada al navegar por
+   * este enlace. Compensa que los dos renders del mismo cuarto no esten
+   * alineados al mismo "norte", para que al alternar la variante el usuario
+   * siga mirando al mismo punto fisico. Calibrar por prueba (puede ser negativo).
+   */
+  linkYawOffset?: number;
+}
+
+// Animación de cámara para el modo reproducción.
+// La cámara arranca en `from` y viaja suavemente hasta `to` en 6.5s.
+export interface PlaybackAnimation {
+  from: { pitch: number; yaw: number };
+  to:   { pitch: number; yaw: number };
+}
+
+/** Screen corners in panorama coordinates, clockwise from top left. */
+export interface PanoramaVideoConfig {
+  src: string;
+  variantId?: string;
+  corners: [
+    { pitch: number; yaw: number }, { pitch: number; yaw: number },
+    { pitch: number; yaw: number }, { pitch: number; yaw: number },
+  ];
+}
+
+export interface SceneConfig {
+  videoScreen?: PanoramaVideoConfig;
+  id: string;
+  name: string;
+  panorama: string;
+  description: string;
+  thumbnail?: string;
+  defaultView: {
+    pitch: number;
+    yaw: number;
+    hfov: number;
+  };
+  hotspots: HotspotConfig[];
+  /** Variantes opcionales para alternar el render del cuarto (ej. alcoba vs estudio) */
+  variants?: SceneVariantConfig[];
+  /** Posicion del boton de cambio de variante DENTRO del panorama (pitch/yaw).
+   * Solo se renderiza si la escena tiene variants[]. */
+  variantButton?: { pitch: number; yaw: number };
+  /** Animaciones para el modo reproducción. Se elige una aleatoriamente. */
+  playbackAnimations?: PlaybackAnimation[];
+}
+
+// ─── Floor Plan Room ─────────────────────────────────────────────────
+export interface FloorPlanRoomConfig {
+  /** Optional furnishing variant selected by this floor-plan point. */
+  variantId?: string;
+  id: string;
+  sceneId: string;
+  label: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill?: string;
+  stroke?: string;
+  /** Posicion % horizontal del radar sobre imagen real (0-100) */
+  dotX?: number;
+  /** Posicion % vertical del radar sobre imagen real (0-100) */
+  dotY?: number;
+  /**
+   * Offset de yaw (grados) que se SUMA a la rotacion del cono del radar para
+   * esta habitacion. Compensa que el "norte" del render no coincida con el
+   * del plano, para que el cono apunte en la direccion correcta.
+   */
+  radarYawOffset?: number;
+  adjacentTo?: string[];
+}
+
+// ─── Floor Plan ───────────────────────────────────────────────────────
+export interface FloorPlanConfig {
+  width: number;
+  height: number;
+  background: string;
+  /** URL de imagen real de planta (activa el modo imagen de fondo) */
+  backgroundImage?: string;
+  rooms: FloorPlanRoomConfig[];
+}
+
+// ─── Brand Config ─────────────────────────────────────────────────────
+export interface BrandConfig {
+  name: string;
+  tagline: string;
+  logo: string;
+  website?: string;
+}
+
+// ─── Apartment ────────────────────────────────────────────────────────
+export interface ApartmentConfig {
+  /** Unique apartment ID */
+  id: string;
+  /** Display name (e.g. "Apto 101") */
+  name: string;
+  /** Short description */
+  description: string;
+  /** Floor number (for building visualization) */
+  floor: number;
+  /** Position index on the floor (0-based, left to right) */
+  position: number;
+  /** Number of bedrooms */
+  bedrooms: number;
+  /** Number of bathrooms */
+  bathrooms: number;
+  /** Área construida en m² */
+  area: number;
+  /** Área privada en m² (opcional; se muestra junto a la construida) */
+  areaPrivada?: number;
+  /** Optional hotspot position override (% of building image) */
+  hotspotX?: number;
+  hotspotY?: number;
+  /**
+   * Dirección hacia la que se despliega la tarjeta de info en el selector al
+   * pasar el cursor. Por defecto 'up' (hacia arriba). Útil para hotspots
+   * cerca de un borde donde la tarjeta no cabe en la dirección por defecto.
+   */
+  cardDir?: 'up' | 'down' | 'left' | 'right';
+  /**
+   * Indica explicitamente si el apartamento esta disponible para recorrer.
+   * false = mostrar como "Proximamente" en el selector y sidebar.
+   * Si se omite, se determina automaticamente segun las escenas.
+   */
+  available?: boolean;
+  /** Scenes for this apartment */
+  scenes: SceneConfig[];
+  /** Floor plan for this apartment */
+  floorPlan: FloorPlanConfig;
+}
+
+// ─── Building ─────────────────────────────────────────────────────────
+export interface BuildingConfig {
+  /** Unique building ID */
+  id: string;
+  /** Display name (e.g. "Torre A") */
+  name: string;
+  /** Number of floors */
+  floors: number;
+  /** Apartments per floor */
+  apartmentsPerFloor: number;
+  /** List of apartments */
+  apartments: ApartmentConfig[];
+}
+
+// ─── Tour Config (ROOT) ──────────────────────────────────────────────
+// ─── Galeria / Plantas ────────────────────────────────────────────────
+export interface GalleryImageConfig {
+  id: string;
+  src: string;
+  title?: string;
+  caption?: string;
+}
+
+// Ajustes globales del modo reproducción (velocidades, holds, HFOV).
+// Todos opcionales: si se omiten, se usan los valores por defecto de
+// playback-utils.ts. Calibrables en vivo desde la pestaña Playback de ?debug=1.
+export interface PlaybackSettings {
+  /** Velocidad del paneo principal en °/s (menor = más contemplativo). */
+  panSpeed?: number;
+  /** Velocidad de la transición entre tramos en °/s. */
+  transitionSpeed?: number;
+  /** Duración de una toma estática (from == to) en ms. */
+  staticHoldMs?: number;
+  /** HFOV usado durante el modo reproducción. */
+  hfov?: number;
+}
+
+// Recorrido 360 de un tercero (p.ej. Matterport) que se abre como pop-up
+// desde el sidebar. Las areas se muestran siempre mientras esta abierto.
+export interface ExternalTourConfig {
+  id: string;
+  /** Boton padre del sidebar que despliega este recorrido (p.ej. 'Apartamento Tipo C'). */
+  group?: string;
+  label: string;
+  /** URL embebible (iframe) del recorrido. */
+  url: string;
+  area: number;
+  areaPrivada?: number;
+}
+
+export interface TourConfig {
+  brand: BrandConfig;
+  theme: ThemeConfig;
+  /** Buildings with apartments */
+  buildings: BuildingConfig[];
+  /** Auto-rotate speed (0 = off, negative = clockwise) */
+  autoRotateSpeed: number;
+  /** Show floor plan by default */
+  showFloorPlan: boolean;
+  /** Show welcome screen on load */
+  showWelcome: boolean;
+  /** Renders del proyecto (gimnasio, piscina, fachada, etc) */
+  gallery?: GalleryImageConfig[];
+  /** Plantas arquitectonicas del proyecto (sin burbujas) */
+  plantas?: GalleryImageConfig[];
+  /** Recorridos de terceros abiertos en pop-up desde el sidebar */
+  externalTours?: ExternalTourConfig[];
+  /**
+   * Amenities del proyecto como recorridos 360 (lobby, piscina, etc).
+   * Se modela como un "apartamento" especial para reutilizar el motor de
+   * escenas: cada amenity es una escena navegable desde el sidebar.
+   */
+  amenities?: ApartmentConfig;
+  /** Ajustes globales del modo reproducción (velocidad, holds, HFOV). */
+  playback?: PlaybackSettings;
+}

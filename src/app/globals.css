@@ -1,0 +1,377 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --color-primary: var(--primary);
+  --color-ring: var(--ring);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #FFFFFF;
+  --ring: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.12);
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: rgba(255, 255, 255, 0.5);
+  --accent: rgba(255, 255, 255, 0.12);
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #ffffff;
+  --popover: rgba(0, 0, 0, 0.8);
+  --popover-foreground: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PANNELLUM OVERRIDES
+   ═══════════════════════════════════════════════════════════════════ */
+
+.pnlm-container {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+  background: #000 !important;
+}
+
+.pnlm-render-container canvas {
+  background: #000 !important;
+}
+
+.pnlm-controls-container,
+.pnlm-about-msg,
+.pnlm-orientation-button,
+.pnlm-load-button {
+  display: none !important;
+}
+
+.pnlm-grab { cursor: grab !important; }
+.pnlm-grabbing { cursor: grabbing !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   HOTSPOT STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+
+.pano-hotspot {
+  cursor: pointer !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pano-hotspot:hover {
+  transform: scale(1.2) !important;
+  z-index: 100 !important;
+}
+
+/* Hotspot circle base */
+.pano-hotspot-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(227, 0, 15, 0.35);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.pano-hotspot:hover .pano-hotspot-circle {
+  border-color: rgba(227, 0, 15, 0.6);
+  box-shadow: 0 0 32px rgba(227, 0, 15, 0.2);
+}
+
+/* Scene hotspot — gold */
+.pano-hotspot-circle[data-type="scene"] {
+  background: rgba(227, 0, 15, 0.9);
+  box-shadow: 0 0 24px rgba(227, 0, 15, 0.4);
+}
+
+/* Info hotspot — gold dimmed */
+.pano-hotspot-circle[data-type="info"] {
+  background: rgba(227, 0, 15, 0.6);
+  box-shadow: 0 0 20px rgba(227, 0, 15, 0.25);
+}
+
+/* URL hotspot — gold dimmed */
+.pano-hotspot-circle[data-type="url"] {
+  background: rgba(227, 0, 15, 0.6);
+  box-shadow: 0 0 20px rgba(227, 0, 15, 0.25);
+}
+
+/* Pulse ring for scene hotspots */
+@keyframes pano-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.pano-hotspot-circle[data-type="scene"]::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(227, 0, 15, 0.5);
+  animation: pano-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hotspot icon */
+.pano-hotspot-icon {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.pano-hotspot-icon[data-type="info"] {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+}
+
+/* Tooltip bubble */
+.pano-hotspot-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(227, 0, 15, 0.15);
+  border-radius: 10px;
+  padding: 8px 16px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.pano-hotspot-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.75);
+}
+
+.pano-hotspot:hover .pano-hotspot-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.pano-hotspot-tooltip-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCENE TRANSITION OVERLAY
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes selectorFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.scene-transition-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255,0.10) 0%, rgba(255,255,255,0.05) 50%, rgba(255, 255, 255,0.10) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LOADING SCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes loading-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes loading-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   WELCOME SCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes welcome-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes welcome-fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes welcome-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   COMPASS
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes compass-needle {
+  from { transform: rotate(var(--start-deg)); }
+  to { transform: rotate(var(--end-deg)); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   UTILITY ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes slide-down-fade {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-in-right { animation: slide-in-right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-slide-down-fade { animation: slide-down-fade 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-fade-in { animation: fade-in 0.3s ease; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════ */
+
+.tour-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tour-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tour-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(227, 0, 15, 0.25);
+  border-radius: 2px;
+}
+
+.tour-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(227, 0, 15, 0.5);
+}
+
+/* Scrollbar de la barra lateral — usa el beige del propio sidebar */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FULLSCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+
+:fullscreen {
+  background: black;
+}
+
+:fullscreen body {
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .pano-hotspot-circle {
+    width: 38px;
+    height: 38px;
+  }
+  .pano-hotspot-icon {
+    font-size: 17px;
+  }
+  .pano-hotspot-tooltip {
+    padding: 6px 12px;
+  }
+  .pano-hotspot-tooltip-text {
+    font-size: 11px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
