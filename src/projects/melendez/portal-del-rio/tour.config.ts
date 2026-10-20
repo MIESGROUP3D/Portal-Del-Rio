@@ -83,6 +83,7 @@ const scenesA: SceneConfig[] = [
       go(A, 'sala', 'acceso', 'Acceso', -122, -5.8),
       go(A, 'sala', 'hall', 'Hall', 115.9, -19.2),
       go(A, 'sala', 'estudio', 'Estudio', 58, -3),
+      go(A, 'sala', 'hab-ppal', 'Alcoba principal', 136.5, -5.4),
     ],
   },
   {
@@ -177,7 +178,7 @@ const scenesA: SceneConfig[] = [
 
 const roomsA: FloorPlanRoomConfig[] = [
   dot(A, 'acceso', 'Acceso', 74.2, 87.3, -88, ['sala', 'hab-aux', 'hall']),
-  dot(A, 'sala', 'Sala y comedor', 51.2, 56.4, -85, ['acceso', 'balcon', 'hall', 'estudio']),
+  dot(A, 'sala', 'Sala y comedor', 51.2, 56.4, -85, ['acceso', 'balcon', 'hall', 'estudio', 'hab-ppal']),
   dot(A, 'balcon', 'Balcón', 38, 59.4, 90, ['sala', 'estudio', 'hall']),
   dot(A, 'estudio', 'Estudio', 51.2, 19.9, -75, ['sala', 'hall', 'balcon']),
   // Sin lineas: esta burbuja vive en el recuadro de la alcoba opcional, fuera del plano principal.
@@ -215,10 +216,9 @@ const scenesB: SceneConfig[] = [
     panorama: PANO('tipo-b', 'balcon.jpg'),
     defaultView: { pitch: 0, yaw: 0, hfov: 100 },
     hotspots: [
-      go(B, 'balcon', 'sala', 'Sala', 130, -8),
       go(B, 'balcon', 'acceso', 'Acceso', -172.2, -2.9),
       go(B, 'balcon', 'comedor', 'Comedor', -150.7, -3.6),
-      // Segundo acceso a la Sala (mirando al piso)
+      // Id con -2 como lo genero el modo debug (coincide con sus ediciones guardadas).
       { ...go(B, 'balcon', 'sala', 'Sala', -175.2, -23), id: `${B}balcon-to-sala-2` },
     ],
   },
@@ -279,7 +279,6 @@ const scenesB: SceneConfig[] = [
     defaultView: { pitch: 0, yaw: 0, hfov: 100 },
     hotspots: [
       go(B, 'bano-aux', 'hab-aux', 'Alcoba auxiliar', -142.5, -4.9),
-      go(B, 'bano-aux', 'comedor', 'Comedor', 100, -5),
       go(B, 'bano-aux', 'hab-ppal', 'Alcoba principal', 166.6, -5.5),
       go(B, 'bano-aux', 'sala', 'Sala', -98.1, -4.7),
     ],
@@ -300,7 +299,7 @@ const roomsB: FloorPlanRoomConfig[] = [
   dot(B, 'op-flexible', 'Opción flexible', 59.9, 35.7, -85, ['sala', 'hab-aux']),
   dot(B, 'hab-aux', 'Alcoba auxiliar', 49.9, 16.6, -10, ['comedor', 'bano-aux']),
   dot(B, 'hab-ppal', 'Alcoba principal', 19.9, 18.5, -65, ['comedor', 'bano-ppal', 'bano-aux']),
-  dot(B, 'bano-aux', 'Baño auxiliar', 23.9, 43.0, 180, ['hab-aux', 'comedor', 'hab-ppal', 'sala']),
+  dot(B, 'bano-aux', 'Baño auxiliar', 23.9, 43.0, 180, ['hab-aux', 'hab-ppal', 'sala', 'comedor']),
   dot(B, 'bano-ppal', 'Baño principal', 7.9, 43.0, 180, ['hab-ppal']),
 ];
 
