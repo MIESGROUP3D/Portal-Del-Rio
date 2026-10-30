@@ -245,8 +245,10 @@ const scenesB: SceneConfig[] = [
     panorama: PANO('tipo-b', 'op-flexible.jpg'),
     defaultView: { pitch: 0, yaw: -10, hfov: 100 },
     hotspots: [
-      go(B, 'op-flexible', 'sala', 'Sala', -172),
-      go(B, 'op-flexible', 'hab-aux', 'Alcoba auxiliar', 170),
+      go(B, 'op-flexible', 'hab-aux', 'Alcoba auxiliar', -178.6, -4.2),
+      go(B, 'op-flexible', 'hab-ppal', 'Alcoba principal', 156.8, -3.7),
+      // Id con -2 como lo genero el modo debug (coincide con sus ediciones guardadas).
+      { ...go(B, 'op-flexible', 'sala', 'Sala', -161.4, -41.9), id: `${B}op-flexible-to-sala-2` },
     ],
     variants: [
       { id: 'op-flexible', label: 'Opción flexible' },
@@ -296,7 +298,7 @@ const roomsB: FloorPlanRoomConfig[] = [
   dot(B, 'sala', 'Sala', 86.6, 20.3, -95, ['acceso', 'balcon', 'comedor']),
   dot(B, 'balcon', 'Balcón', 79.9, 5.8, 0, ['sala', 'acceso', 'comedor']),
   dot(B, 'comedor', 'Comedor', 50.6, 43.0, -85, ['acceso', 'sala', 'hab-aux', 'hab-ppal', 'bano-aux', 'balcon']),
-  dot(B, 'op-flexible', 'Opción flexible', 59.9, 35.7, -85, ['sala', 'hab-aux']),
+  dot(B, 'op-flexible', 'Opción flexible', 59.9, 35.7, -85, ['sala', 'hab-aux', 'hab-ppal']),
   dot(B, 'hab-aux', 'Alcoba auxiliar', 49.9, 16.6, -10, ['comedor', 'bano-aux']),
   dot(B, 'hab-ppal', 'Alcoba principal', 19.9, 18.5, -65, ['comedor', 'bano-ppal', 'bano-aux']),
   dot(B, 'bano-aux', 'Baño auxiliar', 23.9, 43.0, 180, ['hab-aux', 'hab-ppal', 'sala', 'comedor']),
