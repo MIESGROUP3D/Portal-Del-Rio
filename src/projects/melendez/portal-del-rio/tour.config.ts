@@ -24,6 +24,21 @@ const PANO  = (folder: 'tipo-a' | 'tipo-b' | 'areas', file: string) => assetPath
 const PLAN  = (file: string) => assetPath(`${BASE}/floor-plans/${file}`);
 const GALLERY = (file: string) => assetPath(`${BASE}/images/gallery/${file}`);
 const BRAND = (file: string) => assetPath(`/projects/${CONSTRUCTORA}/branding/${file}`);
+const VISTA = (file: string) => assetPath(`${BASE}/images/vistas/${file}`);
+
+/** Pisos por torre. */
+const VISTA_PISOS = 12;
+
+/** Número base de los aptos de cada tipo en la planta de la torre (8 por piso:
+ *  4 Tipo A + 4 Tipo B). En el piso P el apto se llama P + número (02 -> 302). */
+const VISTA_UNITS = {
+  a: ['02', '03', '06', '07'], // esquinas exteriores de la planta de torre
+  b: ['01', '04', '05', '08'], // esquinas junto al punto fijo central
+} as const;
+
+/** Aptos que ya tienen planta de torre con su apto resaltado, en
+ *  floor-plans/vista-torre-T-apto-NN.webp (PNG transparente -> WebP) (clave 'T-NN'). Los demás usan la planta del tipo. */
+const VISTA_PLANS_TORRE = new Set(['01', '02', '03', '04', '05', '06', '07', '08'].map((n) => `1-${n}`));
 
 // Prefijos de id de escena por apartamento
 const A = 'pr-a-';   // Tipo A
@@ -487,6 +502,27 @@ const templateConfig: TourConfig = {
       caption: 'Área construida 61 m² · Área privada 54 m²',
     },
   ],
+
+  // ─── Vistas por piso: 4 torres × 12 pisos × (4 aptos Tipo A + 4 Tipo B) ───
+  // Apto '02' en el piso 3 = 302. Imágenes en images/vistas/torre-N/apto-PNN.jpg
+  // (p.ej. torre-1/apto-302.jpg; ver README de esa carpeta).
+  // Tipo A = 02, 03, 06, 07 · Tipo B = 01, 04, 05, 08 (VISTA_UNITS).
+  vistasPisos: [1, 2, 3, 4].map((t) => ({
+    id: `torre-${t}`,
+    label: `Torre ${t}`,
+    floors: VISTA_PISOS,
+    types: (['a', 'b'] as const).map((tipo) => ({
+      id: `torre-${t}-tipo-${tipo}`,
+      label: `Tipo ${tipo.toUpperCase()}`,
+      plan: PLAN(`planta-tipo-${tipo}-areas.jpg`),
+      units: VISTA_UNITS[tipo].map((n) => ({
+        id: `torre-${t}-apto-${n}`,
+        number: n,
+        views: Array.from({ length: VISTA_PISOS }, (_, i) => VISTA(`torre-${t}/apto-${i + 1}${n}.jpg`)),
+        plan: VISTA_PLANS_TORRE.has(`${t}-${n}`) ? PLAN(`vista-torre-${t}-apto-${n}.webp`) : undefined,
+      })),
+    })),
+  })),
 };
 
 export const portalDelRio = templateConfig;

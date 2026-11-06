@@ -229,6 +229,36 @@ export interface ExternalTourConfig {
   areaPrivada?: number;
 }
 
+// ─── Vistas por piso: Torre > Tipo > Apto ──────────────────────────
+// Cada apto abre un pop-up con la imagen de su vista y su planta.
+export interface FloorViewUnitConfig {
+  id: string;
+  /** Numero base del apto en la planta de la torre (p.ej. '02'). En el piso P
+   *  el apto se llama P + numero: '02' -> 102, 202 ... 1202. */
+  number: string;
+  /** Imagen de la vista por piso: views[0] = piso 1. Si falta o no carga,
+   *  se muestra "Próximamente". */
+  views: string[];
+  /** Planta propia del apto; si se omite se usa la del tipo. */
+  plan?: string;
+}
+
+export interface FloorViewTypeConfig {
+  id: string;
+  label: string;
+  /** Planta por defecto de los aptos de este tipo. */
+  plan?: string;
+  units: FloorViewUnitConfig[];
+}
+
+export interface FloorViewTowerConfig {
+  id: string;
+  label: string;
+  /** Numero de pisos de la torre. */
+  floors: number;
+  types: FloorViewTypeConfig[];
+}
+
 export interface TourConfig {
   brand: BrandConfig;
   theme: ThemeConfig;
@@ -246,6 +276,8 @@ export interface TourConfig {
   plantas?: GalleryImageConfig[];
   /** Recorridos de terceros abiertos en pop-up desde el sidebar */
   externalTours?: ExternalTourConfig[];
+  /** Vistas por piso (boton "Vistas Pisos" del sidebar): Torre > Tipo > Apto */
+  vistasPisos?: FloorViewTowerConfig[];
   /**
    * Amenities del proyecto como recorridos 360 (lobby, piscina, etc).
    * Se modela como un "apartamento" especial para reutilizar el motor de

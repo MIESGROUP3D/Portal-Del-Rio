@@ -18,12 +18,14 @@ import {
   Glasses,
   Clock,
   Building2,
+  Eye,
 } from 'lucide-react';
+import FloorViewModal from '@/components/floor-view-modal';
 import { useTourStore } from '@/lib/tour-store';
 import { assetPath } from '@/lib/asset-path';
 import BrandLogo from '@/components/brand-logo';
 import ExternalTourModal from '@/components/external-tour-modal';
-import type { ApartmentConfig, ExternalTourConfig } from '@/lib/tour-types';
+import type { ApartmentConfig, ExternalTourConfig, FloorViewTowerConfig } from '@/lib/tour-types';
 
 /** Misma logica que building-selector: respeta apt.available si esta definido. */
 function isApartmentAvailable(apt: ApartmentConfig): boolean {
@@ -86,8 +88,11 @@ export default function LeftSidebar() {
     if (g) g.tours.push(t); else acc.push({ name, tours: [t] });
     return acc;
   }, []);
+  // Torre abierta en "Vistas Pisos" (pantalla completa Tipo > Piso > Apto)
+  const [floorTower, setFloorTower] = useState<FloorViewTowerConfig | null>(null);
   const setExternalTourOpen = useTourStore((s) => s.setExternalTourOpen);
-  const hasExternalTour = Boolean(externalTour);
+  // Este flag oculta el plano flotante (floor-plan): aplica a ambos pop-ups.
+  const hasExternalTour = Boolean(externalTour) || Boolean(floorTower);
   useEffect(() => {
     setExternalTourOpen(hasExternalTour);
     return () => setExternalTourOpen(false);
@@ -108,6 +113,18 @@ export default function LeftSidebar() {
 
   const apartments = config.buildings.flatMap((b) => b.apartments);
   const amenities = config.amenities;
+
+  // Vistas Pisos: menu de 3 niveles (Torre > Tipo > Apto) y pop-up de la vista
+  const vistasPisos = config.vistasPisos ?? [];
+  const [vistasOpen, setVistasOpen] = useState(false);
+  const hoverIn = (e: React.MouseEvent<HTMLElement>) => {
+    e.currentTarget.style.color = '#FFFFFF';
+    e.currentTarget.style.background = 'rgba(255, 255, 255,0.05)';
+  };
+  const hoverOut = (e: React.MouseEvent<HTMLElement>) => {
+    e.currentTarget.style.color = 'rgba(255, 255, 255,0.65)';
+    e.currentTarget.style.background = 'transparent';
+  };
 
   // Al entrar a un apartamento desde el sidebar, expandir su seccion y navegar
   const handleSelectApartment = (aptId: string) => {
@@ -470,6 +487,50 @@ export default function LeftSidebar() {
               );
             })()}
 
+            {/* VISTAS PISOS — Torre > Tipo > Apto; cada apto abre su vista + planta */}
+            {vistasPisos.length > 0 && (
+              <>
+                <div style={{ height: 1, background: 'rgba(255, 255, 255,0.08)', margin: '2px 0' }} />
+                <button
+                  type="button"
+                  onClick={() => setVistasOpen((v) => !v)}
+                  aria-expanded={vistasOpen}
+                  className="flex items-center gap-3 px-5 py-3 w-full text-left transition-all duration-150"
+                  style={{ color: 'rgba(255, 255, 255,0.65)' }}
+                  onMouseEnter={hoverIn}
+                  onMouseLeave={hoverOut}
+                >
+                  <Eye size={14} className="shrink-0 opacity-70" />
+                  <span className="flex-1 text-[12px] font-semibold tracking-widest uppercase truncate">
+                    Vistas Pisos
+                  </span>
+                  <ChevronRight size={14} className="shrink-0 transition-transform duration-200" style={{ transform: vistasOpen ? 'rotate(90deg)' : 'none', opacity: 0.5 }} />
+                </button>
+
+                {vistasOpen && (
+                  <div className="flex flex-col" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                    {vistasPisos.map((tower) => (
+                      <button
+                        key={tower.id}
+                        type="button"
+                        onClick={() => {
+                          setFloorTower(tower);
+                          if (showLeftSidebar) toggleLeftSidebar();
+                        }}
+                        className="flex items-center gap-3 pl-10 pr-4 py-2.5 w-full text-left transition-all duration-150"
+                        style={{ color: 'rgba(255, 255, 255,0.6)' }}
+                        onMouseEnter={hoverIn}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255,0.6)'; e.currentTarget.style.background = 'transparent'; }}
+                      >
+                        <Building2 size={13} className="shrink-0" style={{ opacity: 0.6 }} />
+                        <span className="flex-1 text-[11px] font-semibold tracking-wider uppercase truncate">{tower.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
             {/* GALERIA — solo si el proyecto tiene renders en config.gallery */}
             {(config.gallery?.length ?? 0) > 0 && (
             <>
@@ -720,6 +781,7 @@ export default function LeftSidebar() {
       )}
 
       {externalTour && <ExternalTourModal tour={externalTour} onClose={() => setExternalTourId(null)} />}
+      {floorTower && <FloorViewModal tower={floorTower} onClose={() => setFloorTower(null)} />}
 
       {/* ── Modal: VR solo disponible en visores Meta Quest ── */}
       {showVrModal && (
