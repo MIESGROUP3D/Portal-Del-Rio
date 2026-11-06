@@ -50,3 +50,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # El sitio pesa >150 MB (vistas de dron por piso): con el limite por
+          # defecto (10 min) Pages cancelaba el despliegue en "syncing_files".
+          timeout: 1800000
