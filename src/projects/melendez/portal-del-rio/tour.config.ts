@@ -480,7 +480,7 @@ const templateConfig: TourConfig = {
       title,
       category: 'Zonas comunes',
     })),
-    ...[1, 2, 3].map((n) => ({
+    ...[1, 2, 3, 4].map((n) => ({
       id: `fotomontaje-${n}`,
       src: GALLERY(`fotomontajes/fotomontaje-${n}.jpg`),
       title: `Fotomontaje ${n}`,
