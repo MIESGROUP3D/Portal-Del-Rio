@@ -71,7 +71,10 @@ export default function RootLayout({
         <link rel="preload" as="image" href={assetPath(`/building-mobile.jpg`)} media="(max-width: 767px)" />
         <link rel="preload" as="image" href={assetPath(`/building.jpg`)} media="(min-width: 768px)" />
       </head>
+      {/* suppressHydrationWarning: extensiones del navegador (traductores, Grammarly,
+          gestores de contraseñas) agregan atributos al body antes de hidratar. */}
       <body
+        suppressHydrationWarning
         className={`${inter.variable} antialiased bg-black text-white overflow-hidden`}
         style={{ margin: 0, padding: 0, width: "100vw", height: "100vh" }}
       >

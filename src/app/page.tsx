@@ -1,6 +1,8 @@
 'use client';
 
-import { useRef, useCallback, useEffect, useState } from 'react';
+import { useRef, useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+
+const noopSubscribe = () => () => {};
 import PanoViewer from '@/components/pano-viewer';
 import type { PanoViewerHandle } from '@/components/pano-viewer';
 import FloorPlan from '@/components/floor-plan';
@@ -53,16 +55,20 @@ export default function Home() {
   // Motor del modo reproducción
   usePlayback();
 
-  const previewAptParam = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('preview')
-    : null;
-  const previewSceneParam = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('scene')
-    : null;
+  // La URL se lee con useSyncExternalStore: en el servidor (y al hidratar) vale ''
+  // y justo despues el valor real. Leer window en el render rompia la hidratacion
+  // con ?preview= (el servidor pintaba el splash y el cliente no).
+  const search = useSyncExternalStore(noopSubscribe, () => window.location.search, () => '');
+  const urlParams = new URLSearchParams(search);
+  const previewAptParam = urlParams.get('preview');
+  const previewSceneParam = urlParams.get('scene');
 
-  const [showSplash, setShowSplash] = useState(!previewAptParam);
+  const [splashDone, setSplashDone] = useState(false);
+  const showSplash = !previewAptParam && !splashDone;
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(() => !previewAptParam && config.showWelcome);
+  const [welcomeState, setShowWelcome] = useState(config.showWelcome);
+  // ?preview= salta la bienvenida
+  const showWelcome = welcomeState && !previewAptParam;
   const [showHelp, setShowHelp] = useState(true);
   const lastAptIdRef = useRef<string | null>(null);
 
@@ -82,7 +88,7 @@ export default function Home() {
     } else {
       setApartment(target);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [previewAptParam]);
 
   // Resetear welcome al cambiar de apartamento
   const currentAptId = selectedApartment?.id ?? null;
@@ -138,7 +144,7 @@ export default function Home() {
   if (!selectedApartment) {
     return (
       <>
-        {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+        {showSplash && <SplashScreen onComplete={() => setSplashDone(true)} />}
         <BuildingSelector />
       </>
     );
