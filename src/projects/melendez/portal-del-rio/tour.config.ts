@@ -36,9 +36,11 @@ const VISTA_UNITS = {
   b: ['01', '04', '05', '08'], // esquinas junto al punto fijo central
 } as const;
 
-/** Aptos que ya tienen planta de torre con su apto resaltado, en
- *  floor-plans/vista-torre-T-apto-NN.webp (PNG transparente -> WebP) (clave 'T-NN'). Los demás usan la planta del tipo. */
-const VISTA_PLANS_TORRE = new Set(['01', '02', '03', '04', '05', '06', '07', '08'].map((n) => `1-${n}`));
+/** Plantas de torre con el apto resaltado (PNG transparente -> WebP), en
+ *  floor-plans/vista-torre-T-apto-NN.webp. Clave: torre que las usa -> torre cuyos
+ *  archivos se usan (las torres 2 y 3 traen plantas idénticas a la 1, así que no se duplican).
+ *  Las torres sin entrada usan la planta del tipo. */
+const VISTA_PLAN_TORRE: Record<number, number> = { 1: 1, 2: 1, 3: 1 };
 
 // Prefijos de id de escena por apartamento
 const A = 'pr-a-';   // Tipo A
@@ -519,7 +521,7 @@ const templateConfig: TourConfig = {
         id: `torre-${t}-apto-${n}`,
         number: n,
         views: Array.from({ length: VISTA_PISOS }, (_, i) => VISTA(`torre-${t}/apto-${i + 1}${n}.jpg`)),
-        plan: VISTA_PLANS_TORRE.has(`${t}-${n}`) ? PLAN(`vista-torre-${t}-apto-${n}.webp`) : undefined,
+        plan: VISTA_PLAN_TORRE[t] ? PLAN(`vista-torre-${VISTA_PLAN_TORRE[t]}-apto-${n}.webp`) : undefined,
       })),
     })),
   })),
