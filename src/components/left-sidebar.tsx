@@ -25,7 +25,7 @@ import { useTourStore } from '@/lib/tour-store';
 import { assetPath } from '@/lib/asset-path';
 import BrandLogo from '@/components/brand-logo';
 import ExternalTourModal from '@/components/external-tour-modal';
-import type { ApartmentConfig, ExternalTourConfig, FloorViewTowerConfig } from '@/lib/tour-types';
+import type { ApartmentConfig, ExternalTourConfig, FloorViewTowerConfig, FloorViewTypeConfig } from '@/lib/tour-types';
 
 /** Misma logica que building-selector: respeta apt.available si esta definido. */
 function isApartmentAvailable(apt: ApartmentConfig): boolean {
@@ -88,11 +88,12 @@ export default function LeftSidebar() {
     if (g) g.tours.push(t); else acc.push({ name, tours: [t] });
     return acc;
   }, []);
-  // Torre abierta en "Vistas Pisos" (pantalla completa Tipo > Piso > Apto)
-  const [floorTower, setFloorTower] = useState<FloorViewTowerConfig | null>(null);
+  // Vistas Pisos: torre desplegada en el menu y torre+tipo abiertos a pantalla completa
+  const [openTowerId, setOpenTowerId] = useState<string | null>(null);
+  const [floorView, setFloorView] = useState<{ tower: FloorViewTowerConfig; type: FloorViewTypeConfig } | null>(null);
   const setExternalTourOpen = useTourStore((s) => s.setExternalTourOpen);
   // Este flag oculta el plano flotante (floor-plan): aplica a ambos pop-ups.
-  const hasExternalTour = Boolean(externalTour) || Boolean(floorTower);
+  const hasExternalTour = Boolean(externalTour) || Boolean(floorView);
   useEffect(() => {
     setExternalTourOpen(hasExternalTour);
     return () => setExternalTourOpen(false);
@@ -509,23 +510,46 @@ export default function LeftSidebar() {
 
                 {vistasOpen && (
                   <div className="flex flex-col" style={{ background: 'rgba(0,0,0,0.2)' }}>
-                    {vistasPisos.map((tower) => (
-                      <button
-                        key={tower.id}
-                        type="button"
-                        onClick={() => {
-                          setFloorTower(tower);
-                          if (showLeftSidebar) toggleLeftSidebar();
-                        }}
-                        className="flex items-center gap-3 pl-10 pr-4 py-2.5 w-full text-left transition-all duration-150"
-                        style={{ color: 'rgba(255, 255, 255,0.6)' }}
-                        onMouseEnter={hoverIn}
-                        onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255,0.6)'; e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        <Building2 size={13} className="shrink-0" style={{ opacity: 0.6 }} />
-                        <span className="flex-1 text-[11px] font-semibold tracking-wider uppercase truncate">{tower.label}</span>
-                      </button>
-                    ))}
+                    {vistasPisos.map((tower) => {
+                      const towerOpen = openTowerId === tower.id;
+                      const towerColor = towerOpen ? '#FFFFFF' : 'rgba(255, 255, 255,0.6)';
+                      return (
+                        <div key={tower.id}>
+                          <button
+                            type="button"
+                            onClick={() => setOpenTowerId(towerOpen ? null : tower.id)}
+                            aria-expanded={towerOpen}
+                            className="flex items-center gap-3 pl-10 pr-4 py-2.5 w-full text-left transition-all duration-150"
+                            style={{ color: towerColor }}
+                            onMouseEnter={hoverIn}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = towerColor; e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            <Building2 size={13} className="shrink-0" style={{ opacity: 0.6 }} />
+                            <span className="flex-1 text-[11px] font-semibold tracking-wider uppercase truncate">{tower.label}</span>
+                            <ChevronRight size={12} className="shrink-0 transition-transform duration-200" style={{ transform: towerOpen ? 'rotate(90deg)' : 'none', opacity: 0.5 }} />
+                          </button>
+
+                          {/* Tipo A / Tipo B: abren la vista a pantalla completa */}
+                          {towerOpen && tower.types.map((type) => (
+                            <button
+                              key={type.id}
+                              type="button"
+                              onClick={() => {
+                                setFloorView({ tower, type });
+                                if (showLeftSidebar) toggleLeftSidebar();
+                              }}
+                              className="flex items-center gap-3 pl-14 pr-4 py-2 w-full text-left transition-all duration-150"
+                              style={{ color: 'rgba(255, 255, 255,0.55)' }}
+                              onMouseEnter={hoverIn}
+                              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255,0.55)'; e.currentTarget.style.background = 'transparent'; }}
+                            >
+                              <Home size={12} className="shrink-0" style={{ opacity: 0.55 }} />
+                              <span className="flex-1 text-[11px] font-medium tracking-wider uppercase truncate">{type.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </>
@@ -781,7 +805,14 @@ export default function LeftSidebar() {
       )}
 
       {externalTour && <ExternalTourModal tour={externalTour} onClose={() => setExternalTourId(null)} />}
-      {floorTower && <FloorViewModal tower={floorTower} onClose={() => setFloorTower(null)} />}
+      {floorView && (
+        <FloorViewModal
+          key={floorView.type.id}
+          tower={floorView.tower}
+          type={floorView.type}
+          onClose={() => setFloorView(null)}
+        />
+      )}
 
       {/* ── Modal: VR solo disponible en visores Meta Quest ── */}
       {showVrModal && (

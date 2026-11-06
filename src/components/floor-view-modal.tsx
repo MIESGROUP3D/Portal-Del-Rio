@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, ArrowLeft, Home } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 import type { FloorViewTowerConfig, FloorViewTypeConfig } from '@/lib/tour-types';
 
 /**
@@ -82,36 +82,28 @@ const iconBtn = {
 } as const;
 
 /**
- * Pantalla completa de "Vistas Pisos" para una torre:
- *  1) Elegir tipo (Tipo A / Tipo B) en grande.
- *  2) Elegido el tipo, la lista de aptos queda en la esquina izquierda y el resto
- *     de la pantalla muestra la vista del apto seleccionado + su planta.
+ * Pantalla completa de "Vistas Pisos" para una torre y un tipo (elegidos en el
+ * menu lateral: Torre > Tipo A / Tipo B). Pisos y aptos quedan en la esquina
+ * izquierda; el resto muestra la vista del apto seleccionado con su planta.
  */
-export default function FloorViewModal({ tower, onClose }: { tower: FloorViewTowerConfig; onClose: () => void }) {
-  const [typeId, setTypeId] = useState<string | null>(null);
+export default function FloorViewModal({ tower, type, onClose }: {
+  tower: FloorViewTowerConfig;
+  type: FloorViewTypeConfig;
+  onClose: () => void;
+}) {
   const [unitId, setUnitId] = useState<string | null>(null);
   const [floor, setFloor] = useState(1);
 
-  const type = tower.types.find((t) => t.id === typeId) ?? null;
-  const unit = type ? (type.units.find((u) => u.id === unitId) ?? type.units[0]) : null;
+  const unit = type.units.find((u) => u.id === unitId) ?? type.units[0];
   /** Nombre del apto en un piso: piso + numero base ('02' en piso 3 -> '302'). */
   const aptName = (number: string, p = floor) => `${p}${number}`;
   const floors = Array.from({ length: tower.floors }, (_, i) => i + 1);
 
-  const chooseType = (t: FloorViewTypeConfig) => {
-    setTypeId(t.id);
-    setUnitId(t.units[0]?.id ?? null);
-  };
-
-  // Escape: en la vista de aptos vuelve a elegir tipo; en la eleccion de tipo cierra.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      if (typeId) setTypeId(null); else onClose();
-    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [typeId, onClose]);
+  }, [onClose]);
 
   return (
     <div
@@ -137,49 +129,20 @@ export default function FloorViewModal({ tower, onClose }: { tower: FloorViewTow
         <X size={16} />
       </button>
 
-      {!type ? (
-        /* ── Paso 1: elegir tipo, a pantalla completa ── */
-        <div key="types" className="fv-rise h-full flex flex-col items-center justify-center gap-8 px-4 py-16 overflow-y-auto">
-          <div className="text-center select-none">
-            <p className="text-[11px] tracking-[0.3em] uppercase" style={{ color: 'rgba(255, 255, 255,0.45)' }}>Vistas pisos</p>
-            <h2 className="mt-2 text-2xl md:text-3xl font-semibold tracking-widest uppercase">{tower.label}</h2>
-            <p className="mt-2 text-[12px]" style={{ color: 'rgba(255, 255, 255,0.55)' }}>Selecciona el tipo de apartamento</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full max-w-3xl">
-            {tower.types.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => chooseType(t)}
-                className="group flex flex-col overflow-hidden rounded-xl text-left transition-all duration-200 hover:-translate-y-1"
-                style={{ background: 'rgba(255, 255, 255,0.04)', border: '1px solid rgba(255, 255, 255,0.14)', cursor: 'pointer' }}
-              >
-                <div className="flex items-center justify-center h-40 md:h-56 p-4" style={{ background: 'rgba(255, 255, 255,0.03)' }}>
-                  {t.plan
-                    ? <img src={t.plan} alt="" draggable={false} className="max-h-full max-w-full object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
-                    : <Home size={40} style={{ opacity: 0.4 }} />}
-                </div>
-                <div className="flex items-center justify-between px-5 py-4" style={{ borderTop: '1px solid rgba(255, 255, 255,0.1)' }}>
-                  <span className="text-[15px] font-semibold tracking-widest uppercase">{t.label}</span>
-                  <span className="text-[11px]" style={{ color: 'rgba(255, 255, 255,0.5)' }}>{t.units.length} aptos</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        /* ── Paso 2: aptos en la esquina izquierda + vista y planta ── */
-        <div key="units" className="fv-fade h-full flex flex-col md:flex-row gap-3 md:gap-4 p-3 md:p-4 pt-14 md:pt-4">
+        {/* Aptos en la esquina izquierda + vista y planta */}
+        <div className="h-full flex flex-col md:flex-row gap-3 md:gap-4 p-3 md:p-4 pt-14 md:pt-4">
           {/* Sin contenedor: cada boton flota por separado sobre el fondo */}
           <aside className="shrink-0 md:w-44 flex flex-col gap-3 self-start md:max-h-full max-w-full">
             <button
-              onClick={() => setTypeId(null)}
+              onClick={onClose}
+              aria-label="Volver al recorrido"
               className="flex items-center gap-2 px-1 py-1 text-left"
               style={{ cursor: 'pointer', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}
             >
               <ArrowLeft size={14} style={{ opacity: 0.7 }} />
               <span className="min-w-0">
                 <span className="block text-[12px] font-semibold tracking-widest uppercase truncate">{tower.label}</span>
-                <span className="block text-[10px] tracking-wider uppercase" style={{ color: 'rgba(255, 255, 255,0.5)' }}>{type.label} · cambiar</span>
+                <span className="block text-[10px] tracking-wider uppercase" style={{ color: 'rgba(255, 255, 255,0.5)' }}>{type.label}</span>
               </span>
             </button>
             {/* Piso: circulos flotantes (grilla 4×3 en desktop, fila deslizable en movil) */}
@@ -261,7 +224,6 @@ export default function FloorViewModal({ tower, onClose }: { tower: FloorViewTow
             </section>
           )}
         </div>
-      )}
     </div>
   );
 }
