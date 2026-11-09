@@ -38,9 +38,9 @@ const VISTA_UNITS = {
 
 /** Plantas de torre con el apto resaltado (PNG transparente -> WebP), en
  *  floor-plans/vista-torre-T-apto-NN.webp. Clave: torre que las usa -> torre cuyos
- *  archivos se usan (las torres 2 y 3 traen plantas idénticas a la 1, así que no se duplican).
+ *  archivos se usan (las torres 2, 3 y 4 traen plantas idénticas a la 1, así que no se duplican).
  *  Las torres sin entrada usan la planta del tipo. */
-const VISTA_PLAN_TORRE: Record<number, number> = { 1: 1, 2: 1, 3: 1 };
+const VISTA_PLAN_TORRE: Record<number, number> = { 1: 1, 2: 1, 3: 1, 4: 1 };
 
 // Prefijos de id de escena por apartamento
 const A = 'pr-a-';   // Tipo A
